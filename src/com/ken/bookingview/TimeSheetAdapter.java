@@ -1,15 +1,12 @@
 package com.ken.bookingview;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
-
-import com.ken.bookingview.BookingProfileItem.ServiceItems;
 
 public class TimeSheetAdapter extends BaseAdapter {
 
@@ -19,31 +16,17 @@ public class TimeSheetAdapter extends BaseAdapter {
 	private static final int MAX_ITEM = 24;
 
 	private final Context mContext;
-	private HashMap<Integer, TimeSheetItem> mBookingList;
+	private ArrayList<TimeSheetItem> mBookingList;
 
 	private int mTimeSheetItemViewHeight = -1;
 
-	public TimeSheetAdapter(Context context) {
+	public TimeSheetAdapter(Context context, int year, int month, int day) {
 		mContext = context;
-		mBookingList = new HashMap<Integer, TimeSheetItem>(MAX_ITEM);
+		mBookingList = new ArrayList<TimeSheetItem>(MAX_ITEM);
 
 		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
 
-		generateTestingData();
-	}
-
-	private void generateTestingData() {
-		// testing data
-		ArrayList<ServiceItems> serviceList = new ArrayList<ServiceItems>();
-		serviceList.add(ServiceItems.剪髮);
-		serviceList.add(ServiceItems.染髮);
-		TimeSheetItem timeSheetItemForHash = new TimeSheetItem(1, "陳先生", "01:15", "0985091642", serviceList, "1h");
-		mBookingList.put(1, timeSheetItemForHash);
-
-		serviceList = new ArrayList<ServiceItems>();
-		serviceList.add(ServiceItems.剪髮);
-		timeSheetItemForHash = new TimeSheetItem(5, "林先生", "05:30", "0919183483", serviceList, "1h");
-		mBookingList.put(5, timeSheetItemForHash);
+		mBookingList = BookingManager.getInstance().getBookingListByDay(mBookingList, year, month, day);
 	}
 
 	@Override
@@ -62,28 +45,39 @@ public class TimeSheetAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public View getView(final int position, View convertView, final ViewGroup parent) {
-		final TimeSheetItem timeSheetItem = mBookingList.get(position);
+	public View getView(int position, View convertView, ViewGroup parent) {
+		// find time sheet item first
+		TimeSheetItem timeSheetItem = null;
+		for (TimeSheetItem item : mBookingList) {
+			if (position == item.bookingHour) {
+				timeSheetItem = item;
+				break;
+			}
+		}
+		// reuse or create view
 		if (convertView == null) {
 			convertView = new TimeSheetItemView(mContext);
 			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mTimeSheetItemViewHeight));
 		}
 		convertView.setTag(R.id.time_sheet_item_identity, position);
 		convertView.setTag(R.id.time_sheet_item_info, timeSheetItem);
-		// convertView.setOnClickListener(new OnClickListener() {
-		// @Override
-		// public void onClick(View v) {
-		// }
-		// });
+
 		return convertView;
 	}
 
-	public void bookOrUpdateTimeSheet(int identity, TimeSheetItem timeSheetItem) {
-		TimeSheetItem currentTimeSheetItem = mBookingList.get(identity);
-		if (currentTimeSheetItem != null) {
-			currentTimeSheetItem.setTimeSheetItem(timeSheetItem);
+	public void addOrUpdateTimeSheet(TimeSheetItem updateItem) {
+		TimeSheetItem targerItem = null;
+		for (TimeSheetItem item : mBookingList) {
+			if (item.bookingYear == updateItem.bookingYear && item.bookingDay == updateItem.bookingDay
+					&& item.bookingHour == updateItem.bookingHour) {
+				targerItem = item;
+				break;
+			}
+		}
+		if (targerItem != null) {
+			targerItem.setTimeSheetItem(updateItem);
 		} else {
-			mBookingList.put(identity, timeSheetItem);
+			mBookingList.add(updateItem);
 		}
 		notifyDataSetInvalidated();
 	}

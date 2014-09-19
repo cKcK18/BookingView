@@ -13,9 +13,9 @@
 
     <Button
         android:id="@+id/btn_book"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginBottom="20dp"
         android:layout_gravity="bottom|center_horizontal"
         android:text="HIT ME" >
     </Button>

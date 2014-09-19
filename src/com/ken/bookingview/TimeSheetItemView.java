@@ -224,7 +224,7 @@ public class TimeSheetItemView extends View {
 		// check any booking by booking name
 		final boolean hasBooking = timeSheet != null;
 		if (hasBooking) {
-			final ArrayList<ServiceItems> serviceList = timeSheet.getServiceItems();
+			final ArrayList<ServiceItems> serviceList = timeSheet.serviceItems;
 			// draw each service item
 			for (int i = 0; i < serviceList.size(); ++i) {
 				final ServiceItems item = serviceList.get(i);
@@ -237,8 +237,8 @@ public class TimeSheetItemView extends View {
 			}
 
 			// draw contents
-			final String content = String.format("%s  %s  %s", timeSheet.getBookingDate(), timeSheet.getBookingName(),
-					timeSheet.getPhoneNumber());
+			final String content = String.format("%02d:%02d  %s  %s", timeSheet.bookingHour, timeSheet.bookingMinutes,
+					timeSheet.bookingName, timeSheet.phoneNumber);
 			canvas.drawText(content, mContentPoint.x, mContentPoint.y, mContentPaint);
 
 			// draw NEW

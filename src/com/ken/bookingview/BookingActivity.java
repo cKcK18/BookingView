@@ -20,8 +20,10 @@ public class BookingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_booking);
 
+		BookingManager.init(this);
+
 		mListView = (ListView) findViewById(R.id.list_view);
-		mListView.setAdapter(new TimeSheetAdapter(this));
+		mListView.setAdapter(new TimeSheetAdapter(this, 2014, 9, 19));
 		mListView.setVelocityScale(0.5f);
 	}
 
@@ -29,13 +31,14 @@ public class BookingActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 
+		// testing
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
 				TimeSheetAdapter adapter = (TimeSheetAdapter) mListView.getAdapter();
 				ArrayList<ServiceItems> serviceList = new ArrayList<ServiceItems>();
 				serviceList.add(ServiceItems.洗髮);
-				adapter.bookOrUpdateTimeSheet(3, new TimeSheetItem(3, "xxxx", "03:25", "0955555555", serviceList, "1h"));
+				adapter.addOrUpdateTimeSheet(new TimeSheetItem("xxxx", 2014, 9, 19, 3, 25, "0955555555", serviceList, "1h"));
 			}
 		}, 2000);
 	}
