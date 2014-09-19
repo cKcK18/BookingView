@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="time_sheet_item_identity" type="id"/>
+    <item name="time_sheet_item_info" type="id"/>
+
+</resources>
