@@ -3,7 +3,7 @@
     <!-- booking view -->
     <dimen name="time_sheet_item_view_height">90dp</dimen> <!-- service_item_height * 4 + gap_between_service_item_and_content -->
     <dimen name="identity_width">115dp</dimen>
-    <dimen name="division_width">4dp</dimen>
+    <dimen name="division_width">6dp</dimen>
     <dimen name="gap_between_division_and_content">22dp</dimen>
     <dimen name="service_item_width">48dp</dimen>
     <dimen name="service_item_height">20dp</dimen>

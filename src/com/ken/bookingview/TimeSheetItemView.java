@@ -96,15 +96,15 @@ public class TimeSheetItemView extends View {
 		mIdentityPaint.setAntiAlias(true);
 		mIdentityPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		mIdentityPaint.setTextSize(45.0f);
-		mIdentityPaint.setColor(Color.DKGRAY);
+		mIdentityPaint.setColor(0xFF7A7A7A);
 		mIdentityPaint.setTextAlign(Paint.Align.CENTER);
 
 		mDivisionPaint = new Paint();
-		mDivisionPaint.setColor(Color.LTGRAY);
+		mDivisionPaint.setColor(0x4CB2B2B2);
 
 		mServiceItemsBackgroundPaint = new Paint();
 		mServiceItemsBackgroundPaint.setStyle(Style.FILL);
-		mServiceItemsBackgroundPaint.setColor(0xFF7373B9);
+		mServiceItemsBackgroundPaint.setColor(0xFF6063A8);
 
 		mServiceItemsPaint = new Paint();
 		mServiceItemsPaint.setAntiAlias(true);
@@ -117,7 +117,7 @@ public class TimeSheetItemView extends View {
 		mContentPaint.setAntiAlias(true);
 		mContentPaint.setTypeface(Typeface.DEFAULT_BOLD);
 		mContentPaint.setTextSize(45.0f);
-		mContentPaint.setColor(0xFF7373B9);
+		mContentPaint.setColor(0xFF6063A8);
 		mContentPaint.setTextAlign(Paint.Align.LEFT);
 
 		mFlagTextBackgroundPaint = new Paint();
@@ -215,7 +215,7 @@ public class TimeSheetItemView extends View {
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		final int identity = (int) getTag(R.id.time_sheet_item_identity);
+		final Integer identity = (Integer) getTag(R.id.time_sheet_item_identity);
 		final TimeSheetItem timeSheet = (TimeSheetItem) getTag(R.id.time_sheet_item_info);
 
 		canvas.drawText(identityToTime(identity), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
@@ -243,7 +243,7 @@ public class TimeSheetItemView extends View {
 
 			// draw NEW
 			canvas.drawPath(mFlagTextBackgroundPath, mFlagTextBackgroundPaint);
-			canvas.drawText("新", mFlagTextPoint.x, mFlagTextPoint.y, mFlagTextPaint);
+			canvas.drawText("New", mFlagTextPoint.x, mFlagTextPoint.y, mFlagTextPaint);
 		}
 	}
 }

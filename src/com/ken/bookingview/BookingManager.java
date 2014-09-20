@@ -48,13 +48,13 @@ public class BookingManager {
 		// testing data
 		ArrayList<ServiceItems> serviceList = new ArrayList<ServiceItems>();
 		serviceList.add(ServiceItems.剪髮);
-		serviceList.add(ServiceItems.染髮);
-		TimeSheetItem timeSheetItemForHash = new TimeSheetItem("陳先生", 2014, 9, 19, 1, 15, "0985091642", serviceList, "1h");
+		serviceList.add(ServiceItems.洗髮);
+		TimeSheetItem timeSheetItemForHash = new TimeSheetItem("ken chen", 2014, 9, 19, 1, 15, "0985091642", serviceList, "1h");
 		mBookingList.add(timeSheetItemForHash);
 
 		serviceList = new ArrayList<ServiceItems>();
-		serviceList.add(ServiceItems.剪髮);
-		timeSheetItemForHash = new TimeSheetItem("林先生", 2014, 9, 19, 5, 30, "0919183483", serviceList, "1h");
+		serviceList.add(ServiceItems.燙髮);
+		timeSheetItemForHash = new TimeSheetItem("yomin lin", 2014, 9, 19, 5, 30, "0919183483", serviceList, "1h");
 		mBookingList.add(timeSheetItemForHash);
 	}
 

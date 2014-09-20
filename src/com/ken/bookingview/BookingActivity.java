@@ -1,19 +1,17 @@
 package com.ken.bookingview;
 
-import java.util.ArrayList;
-
-import com.ken.bookingview.BookingProfileItem.ServiceItems;
-
-import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.widget.ListView;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 
-public class BookingActivity extends Activity {
+public class BookingActivity extends FragmentActivity {
 
-	private final Handler mHandler = new Handler();
+	private HorizontalListView mCalendarListView;
 
-	private ListView mListView;
+	private ViewPager mPager;
+	private PagerAdapter mPagerAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -22,24 +20,19 @@ public class BookingActivity extends Activity {
 
 		BookingManager.init(this);
 
-		mListView = (ListView) findViewById(R.id.list_view);
-		mListView.setAdapter(new TimeSheetAdapter(this, 2014, 9, 19));
-		mListView.setVelocityScale(0.5f);
-	}
+		//
+		mCalendarListView = (HorizontalListView) findViewById(R.id.calendar_list_view);
+		mCalendarListView.setAdapter(new CalendarAdapter(this));
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-		// testing
-		mHandler.postDelayed(new Runnable() {
+		// Instantiate a ViewPager and a PagerAdapter.
+		mPager = (ViewPager) findViewById(R.id.timesheet_pager);
+		mPagerAdapter = new TimeSheetPagerAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mPagerAdapter);
+		mPager.setOnPageChangeListener(new SimpleOnPageChangeListener() {
 			@Override
-			public void run() {
-				TimeSheetAdapter adapter = (TimeSheetAdapter) mListView.getAdapter();
-				ArrayList<ServiceItems> serviceList = new ArrayList<ServiceItems>();
-				serviceList.add(ServiceItems.洗髮);
-				adapter.addOrUpdateTimeSheet(new TimeSheetItem("xxxx", 2014, 9, 19, 3, 25, "0955555555", serviceList, "1h"));
+			public void onPageSelected(int position) {
 			}
-		}, 2000);
+		});
+		mPager.setCurrentItem(CalendarUtils.getIndexOfCurrentDay());
 	}
 }

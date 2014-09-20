@@ -7,7 +7,7 @@ import java.util.Date;
 public class BookingProfileItem implements Serializable {
 
 	public static enum ServiceItems {
-		å‰ªé«®, æ´—é«®, ç‡™é«®, æŸ“é«®
+		°Å¾v, ¬~¾v, ¿S¾v, ¬V¾v
 	};
 
 	private String mBookingName;
