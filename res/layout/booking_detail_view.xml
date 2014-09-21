@@ -80,7 +80,7 @@
             android:textColor="#2DB2C1"
             android:textSize="18sp" />
 
-        <ImageView
+        <ImageButton
             android:id="@+id/booking_detail_date_arrow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -145,14 +145,14 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/bookding_detail_service_item_arrow"
+            android:layout_toLeftOf="@+id/booking_detail_service_item_arrow"
             android:gravity="right"
             android:lines="1"
             android:textColor="#2DB2C1"
             android:textSize="18sp" />
 
-        <ImageView
-            android:id="@+id/bookding_detail_service_item_arrow"
+        <ImageButton
+            android:id="@+id/booking_detail_service_item_arrow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -167,7 +167,7 @@
         android:background="#CCCCCC" />
 
     <TextView
-        android:id="@+id/bookding_detail_required_time_text"
+        android:id="@+id/booking_detail_required_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
