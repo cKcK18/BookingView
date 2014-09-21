@@ -37,7 +37,7 @@ public class BookingDetailView extends LinearLayout {
 		final ImageButton dateButton = (ImageButton) findViewById(R.id.booking_detail_date_arrow);
 		final EditText editPhoneNumber = (EditText) findViewById(R.id.booking_detail_edit_phone_number);
 		final TextView serviceItemText = (TextView) findViewById(R.id.booking_detail_service_item);
-		final Spinner serviceItemSpinner = (Spinner) findViewById(R.id.booking_detail_service_item_arrow);
+		final ImageButton serviceItemButton = (ImageButton) findViewById(R.id.booking_detail_service_item_arrow);
 		final TextView requiredTime = (TextView) findViewById(R.id.booking_detail_required_time);
 		final Button confirm = (Button) findViewById(R.id.booking_detail_confirm);
 		confirm.setOnClickListener(new OnClickListener() {
@@ -68,7 +68,8 @@ public class BookingDetailView extends LinearLayout {
 				}
 				final boolean invalidServiceItem = true;
 				if (invalidServiceItem) {
-					Toast.makeText(BookingDetailView.this.getContext(), "invalide service item", Toast.LENGTH_SHORT).show();
+					Toast.makeText(BookingDetailView.this.getContext(), "invalide service item", Toast.LENGTH_SHORT)
+							.show();
 					return;
 				}
 			}
