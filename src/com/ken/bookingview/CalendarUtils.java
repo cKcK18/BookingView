@@ -2,8 +2,6 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
-import android.util.Log;
-
 public class CalendarUtils {
 
 	/*
@@ -34,7 +32,7 @@ public class CalendarUtils {
 		sEndDate.set(Calendar.DATE, END_DATE);
 	}
 
-	private static int diffDay(long start, long end) {
+	private static int diff(long start, long end) {
 		final long diff = Math.abs(end - start) / A_DAY_IN_MILLISECOND;
 		return (int) diff;
 	}
@@ -42,23 +40,48 @@ public class CalendarUtils {
 	public synchronized static int getTotalDays() {
 		final long start = sStartate.getTimeInMillis();
 		final long end = sEndDate.getTimeInMillis();
-		return diffDay(start, end);
+		return diff(start, end);
+	}
+
+	public synchronized static String getStringOfYearAndMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		final int month = calendar.get(Calendar.MONTH) + 1;
+		final int year = calendar.get(Calendar.YEAR);
+		return String.format("%d¤ë %d", month, year);
 	}
 
 	public synchronized static int getIndexOfCurrentDay() {
 		final Calendar calendar = Calendar.getInstance();
 		final long current = calendar.getTimeInMillis();
 		final long start = sStartate.getTimeInMillis();
-//		Log.d("kenchen", "[getIndexOfCurrentDay] diff: " + diffDay(start, current));
-		return diffDay(start, current);
+		// Log.d("kenchen", "[getIndexOfCurrentDay] diff: " + diffDay(start, current));
+		return diff(start, current);
 	}
 
-	public synchronized static int getIndexBySpecificDate(int year, int month, int day) {
+	public synchronized static int getIndexWithSpecificDate(int year, int month, int day) {
 		final Calendar calendar = Calendar.getInstance();
 		calendar.set(year, month, day);
 		final long start = sStartate.getTimeInMillis();
 		final long specific = calendar.getTimeInMillis();
-		return diffDay(start, specific);
+		return diff(start, specific);
+	}
+
+	public static synchronized int getIndexWithLastMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		calendar.set(Calendar.DATE, 1);
+		final long start = sStartate.getTimeInMillis();
+		final long specific = calendar.getTimeInMillis();
+		return diff(start, specific);
+	}
+
+	public static synchronized int getIndexWithNextMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, 1);
+		calendar.set(Calendar.DATE, 1);
+		final long start = sStartate.getTimeInMillis();
+		final long specific = calendar.getTimeInMillis();
+		return diff(start, specific);
 	}
 
 	public static synchronized Calendar getCalendarByIndex(int index) {
@@ -66,8 +89,8 @@ public class CalendarUtils {
 		final long end = start + index * A_DAY_IN_MILLISECOND;
 		final Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(end);
-//		Log.d("kenchen", String.format("[getCalendarByIndex] index: %d date: %d/%d/%d", index,
-//				calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
+		// Log.d("kenchen", String.format("[getCalendarByIndex] index: %d date: %d/%d/%d", index,
+		// calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
 		return calendar;
 	}
 }

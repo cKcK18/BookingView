@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6063A8"
+    android:orientation="horizontal" >
+
+    <ImageButton
+        android:id="@+id/booking_back"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:paddingBottom="0dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/back" />
+
+    <TextView
+        android:id="@+id/booking_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="my booking list"
+        android:textColor="#B9BAD5"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/booking_status"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:text="today"
+        android:textColor="#27284A"
+        android:textSize="20sp" />
+
+</RelativeLayout>

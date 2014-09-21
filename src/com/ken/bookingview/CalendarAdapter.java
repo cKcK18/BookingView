@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,8 @@ public class CalendarAdapter extends BaseAdapter {
 
 	public CalendarAdapter(Context context) {
 		mContext = context;
-		mCalendarViewWidth = context.getResources().getDisplayMetrics().widthPixels / 7;
+		mCalendarViewWidth = context.getResources().getDisplayMetrics().widthPixels
+				/ BookingActivity.VISIBLE_DATE_COUNT;
 	}
 
 	@Override
@@ -52,8 +52,11 @@ public class CalendarAdapter extends BaseAdapter {
 		// reuse or create view
 		ViewHolder holder;
 		if (convertView == null) {
+			final LayoutParams lp = new LayoutParams(mCalendarViewWidth,
+					LayoutParams.WRAP_CONTENT);
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.calendar_date_view, parent, false);
-
+			convertView.setLayoutParams(lp);
+			
 			holder = new ViewHolder();
 			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(mCalendarViewWidth,
 					LayoutParams.WRAP_CONTENT);

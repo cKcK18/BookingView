@@ -21,7 +21,6 @@ import java.util.Calendar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +75,7 @@ public class TimeSheetFragment extends Fragment {
 		final Context context = getActivity();
 		ListView listView = new ListView(context);
 		listView.setVelocityScale(0.5f);
+		listView.setVerticalScrollBarEnabled(false);
 		listView.setAdapter(new TimeSheetAdapter(context, mCalendar.get(Calendar.YEAR),
 				mCalendar.get(Calendar.MONTH) + 1, mCalendar.get(Calendar.DATE)));
 //		Log.d("kenchen",

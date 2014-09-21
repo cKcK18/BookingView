@@ -8,7 +8,96 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical" >
-        <com.ken.bookingview.HorizontalListView
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="#6063A8"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/booking_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:paddingBottom="8dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="0dp"
+                android:paddingTop="8dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/back" />
+
+            <TextView
+                android:id="@+id/booking_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="my booking list"
+                android:textColor="#B9BAD5"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/booking_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="today"
+                android:textColor="#27284A"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="#6063A8"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/booking_left_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/booking_date"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="40dp"
+                android:paddingTop="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/left_arrow" />
+
+            <TextView
+                android:id="@+id/booking_date"
+                android:layout_width="120dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="3月 2014"
+                android:textColor="#FFFFFF"
+                android:textSize="23sp" />
+
+            <ImageButton
+                android:id="@+id/booking_right_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/booking_date"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:paddingBottom="0dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="0dp"
+                android:paddingTop="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/right_arrow" />
+        </RelativeLayout>
+
+        <com.ken.bookingview.HorizontalListView
             android:id="@+id/calendar_list_view"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -20,13 +109,13 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_book"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="20dp"
-        android:text="HIT ME" >
-    </Button>
+        android:background="@android:color/transparent"
+        android:src="@drawable/add_new2" />
 
 </FrameLayout>

@@ -26,7 +26,7 @@ public class TimeSheetAdapter extends BaseAdapter {
 
 		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
 
-		mBookingList = BookingManager.getInstance().getBookingListByDay(mBookingList, year, month, day);
+		mBookingList = BookingDataManager.getInstance().getBookingListByDay(mBookingList, year, month, day);
 	}
 
 	@Override

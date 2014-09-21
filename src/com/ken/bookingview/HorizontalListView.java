@@ -38,6 +38,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
+import android.view.animation.Interpolator;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -53,6 +54,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	protected int mCurrentX;
 	protected int mNextX;
 	private int mMaxX = Integer.MAX_VALUE;
+	private int mCurrentPosition;
 	private int mDisplayOffset = 0;
 	protected Scroller mScroller;
 	private GestureDetector mGesture;
@@ -60,6 +62,24 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	private OnItemSelectedListener mOnItemSelected;
 	private OnItemClickListener mOnItemClicked;
 	private boolean mDataChanged = false;
+
+	// simulate fast scrolling through setSelection()
+	private static final int FAST_SCROLLING_COUNT = 65;
+	private static final int RESERVED_VIEW_COUNT = 20;
+	private static final int ACTIVED_COUNT = BookingActivity.VISIBLE_DATE_COUNT;
+
+	private boolean mSimulateFastScrolling = false;
+	private int mSimulateNextX = -1;
+
+	private static class ScrollInterpolator implements Interpolator {
+		public ScrollInterpolator() {
+		}
+
+		public float getInterpolation(float t) {
+			t -= 1.0f;
+			return t * t * t * t * t + 1;
+		}
+	}
 
 	public HorizontalListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -73,7 +93,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mCurrentX = 0;
 		mNextX = 0;
 		mMaxX = Integer.MAX_VALUE;
-		mScroller = new Scroller(getContext());
+		mCurrentPosition = 0;
+		mScroller = new Scroller(getContext(), new ScrollInterpolator());
 		mGesture = new GestureDetector(getContext(), mOnGesture);
 	}
 
@@ -137,8 +158,22 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	@Override
 	public void setSelection(int position) {
 		if (getChildCount() != 0) {
-			final int distanceX = getChildAt(0).getWidth() * position;
-			mScroller.startScroll(mNextX, 0, distanceX, 0, 100);
+			final int width = getChildAt(0).getWidth();
+			final int distanceX = width * position;
+			final int diff = position - mCurrentPosition;
+			final int reservedX = RESERVED_VIEW_COUNT * width;
+			Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
+			// simulate fast scrolling
+			if (diff > FAST_SCROLLING_COUNT) {
+				mSimulateNextX = distanceX - reservedX;
+				mLeftViewIndex = position - RESERVED_VIEW_COUNT - 2;
+				mRightViewIndex = position - RESERVED_VIEW_COUNT + ACTIVED_COUNT;
+				mSimulateFastScrolling = true;
+			} else if (diff < -FAST_SCROLLING_COUNT) {
+				// TODO implement
+			}
+			Log.d("kenchen", String.format("[setSelection] nextX: %d, distanceX: %d", mNextX, distanceX));
+			mScroller.startScroll(mNextX, 0, distanceX - mNextX, 0, 300);
 			requestLayout();
 		}
 	}
@@ -150,8 +185,15 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		}
 
 		addViewInLayout(child, viewPos, params, true);
-		child.measure(MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST),
-				MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
+
+		// add a simulate view with bigger width.
+		final int widthSpec;
+		if (mSimulateFastScrolling) {
+			widthSpec = MeasureSpec.makeMeasureSpec(mSimulateNextX, MeasureSpec.EXACTLY);
+		} else {
+			widthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.AT_MOST);
+		}
+		child.measure(widthSpec, MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.AT_MOST));
 	}
 
 	@SuppressLint("DrawAllocation")
@@ -191,13 +233,17 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		fillList(dx);
 		positionItems(dx);
 
+		Log.d("kenchen", String.format("[onLayout] left: %d, right: %d", mLeftViewIndex, mRightViewIndex));
+
 		mCurrentX = mNextX;
+		mCurrentPosition = mCurrentX / getChildAt(0).getMeasuredWidth();
 
 		if (!mScroller.isFinished()) {
 			post(new Runnable() {
 				@Override
 				public void run() {
 					requestLayout();
+					mSimulateFastScrolling = false;
 				}
 			});
 		}
@@ -250,7 +296,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			removeViewInLayout(child);
 			mLeftViewIndex++;
 			child = getChildAt(0);
-
 		}
 
 		child = getChildAt(getChildCount() - 1);
@@ -309,13 +354,11 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 		@Override
 		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-			Log.d("Kenchen", "[onFling]");
 			return HorizontalListView.this.onFling(e1, e2, velocityX, velocityY);
 		}
 
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			Log.d("Kenchen", "[onScroll] distanceX: " + distanceX);
 			synchronized (HorizontalListView.this) {
 				mNextX += (int) distanceX;
 			}

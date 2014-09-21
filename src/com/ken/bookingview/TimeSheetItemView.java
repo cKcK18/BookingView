@@ -82,7 +82,8 @@ public class TimeSheetItemView extends View {
 		mServiceItemWidth = resources.getDimensionPixelSize(R.dimen.service_item_width);
 		mServiceItemHeight = resources.getDimensionPixelSize(R.dimen.service_item_height);
 		mGapBetweenServiceItem = resources.getDimensionPixelSize(R.dimen.gap_between_service_item);
-		mGapBetweenServiceItemAndContent = resources.getDimensionPixelSize(R.dimen.gap_between_service_item_and_content);
+		mGapBetweenServiceItemAndContent = resources
+				.getDimensionPixelSize(R.dimen.gap_between_service_item_and_content);
 
 		mFlagTextLeft = resources.getDimensionPixelSize(R.dimen.flag_text_left);
 		mFlagTextRight = resources.getDimensionPixelSize(R.dimen.flag_text_right);
@@ -161,11 +162,13 @@ public class TimeSheetItemView extends View {
 		}
 		int serviceItemLeft = paddingLeftForContent;
 		for (int i = 0; i < MAX_SERVICE_ITEM; ++i) {
-			final Rect rect = new Rect(serviceItemLeft, mServiceItemHeight, serviceItemLeft + mServiceItemWidth, mServiceItemHeight * 2);
+			final Rect rect = new Rect(serviceItemLeft, mServiceItemHeight, serviceItemLeft + mServiceItemWidth,
+					mServiceItemHeight * 2);
 			mServiceListBackgroundRect.add(rect);
 
 			final Point point = new Point();
-			estimatePositionInCenter(point, rect.left, rect.top, mServiceItemWidth, mServiceItemHeight, mServiceItemsPaint);
+			estimatePositionInCenter(point, rect.left, rect.top, mServiceItemWidth, mServiceItemHeight,
+					mServiceItemsPaint);
 			mServiceListPoint.add(point);
 
 			serviceItemLeft += mServiceItemWidth + mGapBetweenServiceItem;
@@ -175,8 +178,8 @@ public class TimeSheetItemView extends View {
 		if (mContentPoint == null) {
 			mContentPoint = new Point();
 		}
-		estimatePositionInCenter(mContentPoint, mDivisionRect.right + mGapBetweenDivisionAndContent, mServiceItemHeight * 2
-				+ mGapBetweenServiceItemAndContent, 0, mServiceItemHeight, mContentPaint);
+		estimatePositionInCenter(mContentPoint, mDivisionRect.right + mGapBetweenDivisionAndContent, mServiceItemHeight
+				* 2 + mGapBetweenServiceItemAndContent, 0, mServiceItemHeight, mContentPaint);
 
 		// prepare the NEW tag
 		if (mFlagTextBackgroundPath == null) {
@@ -193,8 +196,8 @@ public class TimeSheetItemView extends View {
 		if (mFlagTextPoint == null) {
 			mFlagTextPoint = new Point();
 		}
-		estimatePositionInCenter(mFlagTextPoint, mFlagTextLeft, mFlagTextTop, mFlagTextRight - mFlagTextLeft, mFlagTextCenter
-				- mFlagTextTop, mFlagTextPaint);
+		estimatePositionInCenter(mFlagTextPoint, mFlagTextLeft, mFlagTextTop, mFlagTextRight - mFlagTextLeft,
+				mFlagTextCenter - mFlagTextTop, mFlagTextPaint);
 	}
 
 	/*
@@ -209,7 +212,7 @@ public class TimeSheetItemView extends View {
 	}
 
 	private String identityToTime(int identity) {
-		// just like the identity is 15, it will transform into 15:00
+		// just like the identity is 9, it will transform into _9:00
 		return String.format("%2d:00", identity);
 	}
 
@@ -245,5 +248,8 @@ public class TimeSheetItemView extends View {
 			canvas.drawPath(mFlagTextBackgroundPath, mFlagTextBackgroundPaint);
 			canvas.drawText("New", mFlagTextPoint.x, mFlagTextPoint.y, mFlagTextPaint);
 		}
+
+		// draw end line
+		canvas.drawRect(getRight() - 5, 0, getRight(), getBottom(), mDivisionPaint);
 	}
 }
