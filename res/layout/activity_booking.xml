@@ -34,6 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
+                android:lines="1"
                 android:text="my booking list"
                 android:textColor="#B9BAD5"
                 android:textSize="18sp" />
@@ -45,6 +46,7 @@
                 android:layout_alignParentRight="true"
                 android:background="@android:color/transparent"
                 android:gravity="center"
+                android:lines="1"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
                 android:text="today"
@@ -78,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                android:text="3月 2014"
+                android:lines="1"
                 android:textColor="#FFFFFF"
                 android:textSize="23sp" />
 

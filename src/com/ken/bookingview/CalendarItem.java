@@ -1,10 +1,7 @@
 package com.ken.bookingview;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
-
-import com.ken.bookingview.BookingProfileItem.ServiceItems;
 
 public class CalendarItem implements Serializable {
 

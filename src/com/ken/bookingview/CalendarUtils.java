@@ -47,7 +47,7 @@ public class CalendarUtils {
 		final Calendar calendar = Calendar.getInstance();
 		final int month = calendar.get(Calendar.MONTH) + 1;
 		final int year = calendar.get(Calendar.YEAR);
-		return String.format("%d¤ë %d", month, year);
+		return String.format("%dæœˆ %d", month, year);
 	}
 
 	public synchronized static int getIndexOfCurrentDay() {

@@ -15,7 +15,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ken.bookingview.BookingProfileItem.ServiceItems;
+import com.ken.bookingview.BookingData.ServiceItems;
 
 public class TimeSheetItemView extends View {
 
@@ -219,7 +219,7 @@ public class TimeSheetItemView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		final Integer identity = (Integer) getTag(R.id.time_sheet_item_identity);
-		final TimeSheetItem timeSheet = (TimeSheetItem) getTag(R.id.time_sheet_item_info);
+		final BookingData timeSheet = (BookingData) getTag(R.id.time_sheet_item_info);
 
 		canvas.drawText(identityToTime(identity), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
 		canvas.drawRect(mDivisionRect, mDivisionPaint);

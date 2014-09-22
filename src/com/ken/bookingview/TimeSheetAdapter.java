@@ -16,13 +16,13 @@ public class TimeSheetAdapter extends BaseAdapter {
 	private static final int MAX_ITEM = 24;
 
 	private final Context mContext;
-	private ArrayList<TimeSheetItem> mBookingList;
+	private ArrayList<BookingData> mBookingList;
 
 	private int mTimeSheetItemViewHeight = -1;
 
 	public TimeSheetAdapter(Context context, int year, int month, int day) {
 		mContext = context;
-		mBookingList = new ArrayList<TimeSheetItem>(MAX_ITEM);
+		mBookingList = new ArrayList<BookingData>(MAX_ITEM);
 
 		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
 
@@ -47,8 +47,8 @@ public class TimeSheetAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// find time sheet item first
-		TimeSheetItem timeSheetItem = null;
-		for (TimeSheetItem item : mBookingList) {
+		BookingData timeSheetItem = null;
+		for (BookingData item : mBookingList) {
 			if (position == item.bookingHour) {
 				timeSheetItem = item;
 				break;
@@ -65,10 +65,10 @@ public class TimeSheetAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	public void addOrUpdateTimeSheet(TimeSheetItem updateItem) {
-		TimeSheetItem targerItem = null;
-		for (TimeSheetItem item : mBookingList) {
-			if (item.bookingYear == updateItem.bookingYear && item.bookingDay == updateItem.bookingDay
+	public void addOrUpdateTimeSheet(BookingData updateItem) {
+		BookingData targerItem = null;
+		for (BookingData item : mBookingList) {
+			if (item.bookingYear == updateItem.bookingYear && item.bookingDate == updateItem.bookingDate
 					&& item.bookingHour == updateItem.bookingHour) {
 				targerItem = item;
 				break;

@@ -172,7 +172,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			} else if (diff < -FAST_SCROLLING_COUNT) {
 				// TODO implement
 			}
-			Log.d("kenchen", String.format("[setSelection] nextX: %d, distanceX: %d", mNextX, distanceX));
 			mScroller.startScroll(mNextX, 0, distanceX - mNextX, 0, 300);
 			requestLayout();
 		}
@@ -232,8 +231,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		removeNonVisibleItems(dx);
 		fillList(dx);
 		positionItems(dx);
-
-		Log.d("kenchen", String.format("[onLayout] left: %d, right: %d", mLeftViewIndex, mRightViewIndex));
 
 		mCurrentX = mNextX;
 		mCurrentPosition = mCurrentX / getChildAt(0).getMeasuredWidth();
