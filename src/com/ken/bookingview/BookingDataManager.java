@@ -18,14 +18,14 @@ public class BookingDataManager {
 	private static BookingDataManager sManager;
 
 	public interface OnDateChangedListener {
-		void onDataReady(ArrayList<BookingData> dataList);
+		void onDataReady();
 
-		void onDataChanged(ArrayList<BookingData> dataList);
+		void onDataChanged();
 	}
 
 	private Context mContext;
 	private ArrayList<BookingData> mBookingList;
-	private OnDateChangedListener mOnDateChangedListener;
+	private ArrayList<OnDateChangedListener> mOnDateChangedListener;
 
 	public static void init(Context context) {
 		if (sManager == null) {
@@ -39,7 +39,7 @@ public class BookingDataManager {
 
 	private BookingDataManager(Context context) {
 		mContext = context;
-		mBookingList = new ArrayList<BookingData>();
+		mOnDateChangedListener = new ArrayList<OnDateChangedListener>();
 
 		readBookingData();
 	}
@@ -48,12 +48,17 @@ public class BookingDataManager {
 		new AsyncTask<Void, Void, ArrayList<BookingData>>() {
 			@Override
 			protected ArrayList<BookingData> doInBackground(Void... params) {
+				final ArrayList<BookingData> bookingDataList = new ArrayList<BookingData>();
+
 				final ContentResolver cr = mContext.getContentResolver();
 				final Cursor cursor = cr.query(BookingProvider.CONTENT_URI_NO_NOTIFICATION, null, null, null, null);
+				Log.d(TAG, String.format("[readBookingData] cursor is null: %b, size: %d ", cursor == null,
+						cursor != null ? cursor.getCount() : 0));
 				if (cursor == null || cursor.getCount() == 0) {
-					return null;
+					return bookingDataList;
 				}
 
+				final int idIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_ID);
 				final int nameIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_NAME);
 				final int yearIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_YEAR);
 				final int monthIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_MONTH);
@@ -64,9 +69,10 @@ public class BookingDataManager {
 				final int serviceItemsIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_SERVICE_ITEMS);
 				final int requiredTimeIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_REQUIRED_TIME);
 
-				final ArrayList<BookingData> bookingDataList = new ArrayList<BookingData>();
 				try {
+					cursor.moveToFirst();
 					while (cursor.moveToNext()) {
+						final long id = cursor.getLong(idIndex);
 						final String name = cursor.getString(nameIndex);
 						final int year = cursor.getInt(yearIndex);
 						final int month = cursor.getInt(monthIndex);
@@ -77,8 +83,20 @@ public class BookingDataManager {
 						final String serviceItems = cursor.getString(serviceItemsIndex);
 						final String requiredTime = cursor.getString(requiredTimeIndex);
 						// FIXME
-						final BookingData data = new BookingData(name, year, month, date, hour, minute, phoneNumber,
-								new ArrayList<ServiceItems>(), requiredTime);
+						final ServiceItems[] serviceItemValues = ServiceItems.values();
+						final String[] parts = serviceItems.split(",");
+						final ArrayList<ServiceItems> serviceItemList = new ArrayList<ServiceItems>();
+						if (parts != null) {
+							for (int i = 0; i < parts.length; ++i) {
+								for (int j = 0; j < serviceItemValues.length; ++j) {
+									if (serviceItemValues[j].equals(parts[i])) {
+										serviceItemList.add(serviceItemValues[j]);
+									}
+								}
+							}
+						}
+						final BookingData data = new BookingData(id, name, year, month, date, hour, minute,
+								phoneNumber, serviceItemList, requiredTime);
 						bookingDataList.add(data);
 					}
 				} catch (Exception e) {
@@ -91,58 +109,94 @@ public class BookingDataManager {
 
 			@Override
 			protected void onPostExecute(ArrayList<BookingData> result) {
+				Log.d(TAG, String.format("[readBookingData] dataList: %d", result != null ? result.size() : 0));
 				mBookingList = result;
-				if (mOnDateChangedListener != null) {
-					mOnDateChangedListener.onDataReady(result);
+				for (OnDateChangedListener listener : mOnDateChangedListener) {
+					listener.onDataReady();
 				}
 			}
 		}.execute();
 	}
 
-	public void writeBookingData(final BookingData data) {
-		final int uninsertedSize = mBookingList.size();
-		mBookingList.add(data);
-		final int currentSize = mBookingList.size();
-		Log.d(TAG, String.format("[writeBookingData] booking count: %d -> %d", uninsertedSize, currentSize));
-
+	public void writeBookingData(final BookingData updateData) {
+		BookingData tempData = null;
+		for (BookingData data : mBookingList) {
+			if (isTheSameDate(updateData, data)) {
+				tempData = data;
+				break;
+			}
+		}
+		// update or add in memory
+		final BookingData targerData = tempData;
+		final boolean add = targerData == null;
+		if (add) {
+			mBookingList.add(updateData);
+		} else {
+			targerData.setTimeSheetItem(updateData);
+		}
+		// write database
 		new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				final ContentValues cv = new ContentValues();
-				cv.put(BookingProvider.COLUMN_NAME, data.bookingName);
-				cv.put(BookingProvider.COLUMN_YEAR, data.bookingYear);
-				cv.put(BookingProvider.COLUMN_MONTH, data.bookingMonth);
-				cv.put(BookingProvider.COLUMN_DATE, data.bookingDate);
-				cv.put(BookingProvider.COLUMN_HOUR, data.bookingHour);
-				cv.put(BookingProvider.COLUMN_MINUTE, data.bookingMinutes);
-				cv.put(BookingProvider.COLUMN_PHONE_NUMBER, data.phoneNumber);
+				if (add) {
+					cv.put(BookingProvider.COLUMN_ID, updateData.id);
+				}
+				cv.put(BookingProvider.COLUMN_NAME, updateData.bookingName);
+				cv.put(BookingProvider.COLUMN_YEAR, updateData.bookingYear);
+				cv.put(BookingProvider.COLUMN_MONTH, updateData.bookingMonth);
+				cv.put(BookingProvider.COLUMN_DATE, updateData.bookingDate);
+				cv.put(BookingProvider.COLUMN_HOUR, updateData.bookingHour);
+				cv.put(BookingProvider.COLUMN_MINUTE, updateData.bookingMinutes);
+				cv.put(BookingProvider.COLUMN_PHONE_NUMBER, updateData.phoneNumber);
 				// FIXME
-				cv.put(BookingProvider.COLUMN_SERVICE_ITEMS, "");
-				cv.put(BookingProvider.COLUMN_REQUIRED_TIME, data.requiredTime);
+				final int serviceItemSize = updateData.serviceItems.size();
+				final StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < serviceItemSize; ++i) {
+					sb.append(updateData.serviceItems.get(i).toString());
+					if (i != serviceItemSize - 1) {
+						sb.append(",");
+					}
+				}
+				cv.put(BookingProvider.COLUMN_SERVICE_ITEMS, sb.toString());
+				cv.put(BookingProvider.COLUMN_REQUIRED_TIME, updateData.requiredTime);
 
+				// update or add in database
 				final ContentResolver cr = mContext.getContentResolver();
-				cr.insert(BookingProvider.CONTENT_URI_NO_NOTIFICATION, cv);
-
+				if (add) {
+					cr.insert(BookingProvider.CONTENT_URI_NO_NOTIFICATION, cv);
+				} else {
+					cr.update(BookingProvider.CONTENT_URI_NO_NOTIFICATION, cv, null, null);
+				}
 				return null;
 			}
 
 			@Override
 			protected void onPostExecute(Void result) {
-				if (mOnDateChangedListener != null) {
-					mOnDateChangedListener.onDataChanged(mBookingList);
+				Log.d(TAG, String.format("[writeBookingData] add: %b, dataList: %d", add, mBookingList.size()));
+				for (OnDateChangedListener listener : mOnDateChangedListener) {
+					listener.onDataChanged();
 				}
 			}
 		}.execute();
 	}
 
-	public void setOnDataChangedListener(OnDateChangedListener listener) {
-		mOnDateChangedListener = listener;
+	private boolean isTheSameDate(BookingData data1, BookingData data2) {
+		return data1.bookingYear == data2.bookingYear && data1.bookingMonth == data2.bookingMonth
+				&& data1.bookingDate == data2.bookingDate && data1.bookingHour == data2.bookingHour
+				&& data1.bookingMinutes == data2.bookingMinutes;
 	}
 
-	public ArrayList<BookingData> getBookingListByYear(ArrayList<BookingData> list, int year) {
-		if (list == null) {
-			list = new ArrayList<BookingData>();
-		}
+	public void setOnDataChangedListener(OnDateChangedListener listener) {
+		mOnDateChangedListener.add(listener);
+	}
+
+	public void removeOnDataChangedListener(OnDateChangedListener listener) {
+		mOnDateChangedListener.remove(listener);
+	}
+
+	public ArrayList<BookingData> getBookingListByYear(int year) {
+		final ArrayList<BookingData> list = new ArrayList<BookingData>();
 		for (BookingData timeSheet : mBookingList) {
 			if (year == timeSheet.bookingYear) {
 				list.add(timeSheet);
@@ -151,10 +205,8 @@ public class BookingDataManager {
 		return list;
 	}
 
-	public ArrayList<BookingData> getBookingListByMonth(ArrayList<BookingData> list, int year, int month) {
-		if (list == null) {
-			list = new ArrayList<BookingData>();
-		}
+	public ArrayList<BookingData> getBookingListByMonth(int year, int month) {
+		final ArrayList<BookingData> list = new ArrayList<BookingData>();
 		for (BookingData timeSheet : mBookingList) {
 			if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth) {
 				list.add(timeSheet);
@@ -163,12 +215,10 @@ public class BookingDataManager {
 		return list;
 	}
 
-	public ArrayList<BookingData> getBookingListByDay(ArrayList<BookingData> list, int year, int month, int days) {
-		if (list == null) {
-			list = new ArrayList<BookingData>();
-		}
+	public ArrayList<BookingData> getBookingListByDate(int year, int month, int date) {
+		final ArrayList<BookingData> list = new ArrayList<BookingData>();
 		for (BookingData timeSheet : mBookingList) {
-			if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth && days == timeSheet.bookingDate) {
+			if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth && date == timeSheet.bookingDate) {
 				list.add(timeSheet);
 			}
 		}
@@ -179,5 +229,7 @@ public class BookingDataManager {
 		mContext = null;
 		mBookingList.clear();
 		mBookingList = null;
+		mOnDateChangedListener.clear();
+		mOnDateChangedListener = null;
 	}
 }

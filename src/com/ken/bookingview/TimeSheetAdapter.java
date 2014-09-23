@@ -3,30 +3,38 @@ package com.ken.bookingview;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
 
-public class TimeSheetAdapter extends BaseAdapter {
+import com.ken.bookingview.BookingDataManager.OnDateChangedListener;
 
-	@SuppressWarnings("unused")
+public class TimeSheetAdapter extends BaseAdapter implements OnDateChangedListener {
+
 	private static final String TAG = TimeSheetAdapter.class.getSimpleName();
 
 	private static final int MAX_ITEM = 24;
 
 	private final Context mContext;
+	private final int mYear;
+	private final int mMonth;
+	private final int mDate;
 	private ArrayList<BookingData> mBookingList;
 
 	private int mTimeSheetItemViewHeight = -1;
 
-	public TimeSheetAdapter(Context context, int year, int month, int day) {
+	public TimeSheetAdapter(Context context, int year, int month, int date) {
 		mContext = context;
-		mBookingList = new ArrayList<BookingData>(MAX_ITEM);
+		mYear = year;
+		mMonth = month;
+		mDate = date;
+
+		final BookingDataManager manager = BookingDataManager.getInstance();
+		mBookingList = manager.getBookingListByDate(year, month, date);
 
 		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
-
-		mBookingList = BookingDataManager.getInstance().getBookingListByDay(mBookingList, year, month, day);
 	}
 
 	@Override
@@ -65,20 +73,19 @@ public class TimeSheetAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	public void addOrUpdateTimeSheet(BookingData updateItem) {
-		BookingData targerItem = null;
-		for (BookingData item : mBookingList) {
-			if (item.bookingYear == updateItem.bookingYear && item.bookingDate == updateItem.bookingDate
-					&& item.bookingHour == updateItem.bookingHour) {
-				targerItem = item;
-				break;
-			}
-		}
-		if (targerItem != null) {
-			targerItem.setTimeSheetItem(updateItem);
-		} else {
-			mBookingList.add(updateItem);
-		}
+	@Override
+	public void onDataReady() {
+		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDate);
+		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDate,
+						mBookingList.size()));
+		notifyDataSetInvalidated();
+	}
+
+	@Override
+	public void onDataChanged() {
+		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDate);;
+		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDate,
+				mBookingList.size()));
 		notifyDataSetInvalidated();
 	}
 }

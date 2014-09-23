@@ -21,20 +21,23 @@ import java.util.Calendar;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
 /**
- * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating the page number, along
- * with some dummy text.
+ * A fragment representing a single step in a wizard. The fragment shows a dummy title indicating the page number, along with some dummy
+ * text.
  *
  * <p>
  * This class is used by the {@link CardFlipActivity} and {@link ScreenSlideActivity} samples.
  * </p>
  */
 public class TimeSheetFragment extends Fragment {
+
+	private static final String TAG = TimeSheetFragment.class.getSimpleName();
 	/**
 	 * The argument key for the page number this fragment represents.
 	 */
@@ -44,6 +47,9 @@ public class TimeSheetFragment extends Fragment {
 	 * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
 	 */
 	private int mPageNumber;
+
+	private ListView mListView;
+	private TimeSheetAdapter mAdapter;
 
 	private Calendar mCalendar;
 
@@ -59,7 +65,7 @@ public class TimeSheetFragment extends Fragment {
 	}
 
 	public TimeSheetFragment() {
-	}
+	} 
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -67,22 +73,26 @@ public class TimeSheetFragment extends Fragment {
 
 		mPageNumber = getArguments().getInt(ARG_PAGE);
 		mCalendar = CalendarUtils.getCalendarByIndex(mPageNumber);
+		mAdapter = new TimeSheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
+				mCalendar.get(Calendar.DATE));
+		BookingDataManager.getInstance().setOnDataChangedListener(mAdapter);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout containing a title and body text.
-		final Context context = getActivity();
-		ListView listView = new ListView(context);
-		listView.setVelocityScale(0.5f);
-		listView.setVerticalScrollBarEnabled(false);
-		listView.setAdapter(new TimeSheetAdapter(context, mCalendar.get(Calendar.YEAR),
-				mCalendar.get(Calendar.MONTH) + 1, mCalendar.get(Calendar.DATE)));
-//		Log.d("kenchen",
-//				String.format("postion: %d, %d/%d/%d", mPageNumber, mCalendar.get(Calendar.YEAR),
-//						mCalendar.get(Calendar.MONTH) + 1, mCalendar.get(Calendar.DATE)));
+		mListView = new ListView(getActivity());
+		mListView.setVelocityScale(0.5f);
+		mListView.setVerticalScrollBarEnabled(false);
+		mListView.setAdapter(mAdapter);
+		return mListView;
+	}
 
-		return listView;
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		BookingDataManager.getInstance().removeOnDataChangedListener(mAdapter);
 	}
 
 	public Calendar getCalendar() {

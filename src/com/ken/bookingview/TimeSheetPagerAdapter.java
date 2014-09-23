@@ -1,6 +1,9 @@
 package com.ken.bookingview;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.ken.bookingview.BookingDataManager.OnDateChangedListener;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,7 +37,9 @@ public class TimeSheetPagerAdapter extends FragmentStatePagerAdapter {
 //			mTimeSheetFragmentList.put(pos, reuseFragment);
 //		}
 //		return reuseFragment;
-		return TimeSheetFragment.create(pos);
+		
+		Fragment fragment = TimeSheetFragment.create(pos);
+		return fragment;
 	}
 
 	@Override

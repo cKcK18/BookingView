@@ -50,6 +50,20 @@ public class CalendarUtils {
 		return String.format("%d月 %d", month, year);
 	}
 
+	public synchronized static String getStringOfYearAndLastMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		final int month = calendar.get(Calendar.MONTH);
+		final int year = calendar.get(Calendar.YEAR);
+		return String.format("%d月 %d", month, year);
+	}
+
+	public synchronized static String getStringOfYearAndNextMonth() {
+		final Calendar calendar = Calendar.getInstance();
+		final int month = calendar.get(Calendar.MONTH) + 2;
+		final int year = calendar.get(Calendar.YEAR);
+		return String.format("%d月 %d", month, year);
+	}
+
 	public synchronized static int getIndexOfCurrentDay() {
 		final Calendar calendar = Calendar.getInstance();
 		final long current = calendar.getTimeInMillis();

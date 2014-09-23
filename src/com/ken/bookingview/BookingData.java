@@ -11,6 +11,7 @@ public class BookingData implements Serializable {
 		cut, shampoo, permanent, color, treatment
 	}
 
+	final long id;	// the same as the database id
 	String bookingName;
 	int bookingYear;
 	int bookingMonth;
@@ -21,8 +22,10 @@ public class BookingData implements Serializable {
 	ArrayList<ServiceItems> serviceItems;
 	String requiredTime;
 
-	public BookingData(String bookingName, int bookingYear, int bookingMonth, int bookingDate, int bookingHour,
-			int bookingMinutes, String phoneNumber, ArrayList<ServiceItems> serviceItem, String requiredTime) {
+	public BookingData(long id, String bookingName, int bookingYear, int bookingMonth, int bookingDate,
+			int bookingHour, int bookingMinutes, String phoneNumber, ArrayList<ServiceItems> serviceItem,
+			String requiredTime) {
+		this.id = id;
 		this.bookingName = bookingName;
 		this.bookingYear = bookingYear;
 		this.bookingMonth = bookingMonth;
@@ -44,5 +47,13 @@ public class BookingData implements Serializable {
 		phoneNumber = timeSheetItem.phoneNumber;
 		serviceItems = timeSheetItem.serviceItems;
 		requiredTime = timeSheetItem.requiredTime;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format(
+				"hash: %d, name: %s, date: %04d/%02d/%02d %02d:%02d, phoneNumber: %s, services: %s, requiredTime: %s",
+				hashCode(), bookingName, bookingYear, bookingMonth, bookingDate, bookingHour, bookingMinutes,
+				phoneNumber, serviceItems.toArray().toString(), requiredTime);
 	}
 }

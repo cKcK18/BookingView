@@ -219,17 +219,18 @@ public class TimeSheetItemView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		final Integer identity = (Integer) getTag(R.id.time_sheet_item_identity);
-		final BookingData timeSheet = (BookingData) getTag(R.id.time_sheet_item_info);
-
+		final BookingData data = (BookingData) getTag(R.id.time_sheet_item_info);
+		
 		canvas.drawText(identityToTime(identity), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
 		canvas.drawRect(mDivisionRect, mDivisionPaint);
 
 		// check any booking by booking name
-		final boolean hasBooking = timeSheet != null;
+		final boolean hasBooking = data != null;
 		if (hasBooking) {
-			final ArrayList<ServiceItems> serviceList = timeSheet.serviceItems;
+			final ArrayList<ServiceItems> serviceList = data.serviceItems;
+			final int serviceItemCount = serviceList != null ? serviceList.size() : 0;
 			// draw each service item
-			for (int i = 0; i < serviceList.size(); ++i) {
+			for (int i = 0; i < serviceItemCount; ++i) {
 				final ServiceItems item = serviceList.get(i);
 
 				final Rect rect = mServiceListBackgroundRect.get(i);
@@ -240,8 +241,8 @@ public class TimeSheetItemView extends View {
 			}
 
 			// draw contents
-			final String content = String.format("%02d:%02d  %s  %s", timeSheet.bookingHour, timeSheet.bookingMinutes,
-					timeSheet.bookingName, timeSheet.phoneNumber);
+			final String content = String.format("%02d:%02d  %s  %s", data.bookingHour, data.bookingMinutes,
+					data.bookingName, data.phoneNumber);
 			canvas.drawText(content, mContentPoint.x, mContentPoint.y, mContentPaint);
 
 			// draw NEW

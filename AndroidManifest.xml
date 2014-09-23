@@ -9,12 +9,13 @@
         android:targetSdkVersion="21" />
 
     <application
+        android:name="com.ken.bookingview.BookingApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".BookingActivity"
+            android:name="com.ken.bookingview.BookingActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +25,7 @@
         </activity>
 
         <provider
-            android:name=".BookingProvider"
+            android:name="com.ken.bookingview.BookingProvider"
             android:authorities="com.ken.bookingview"
             android:exported="false" />
     </application>

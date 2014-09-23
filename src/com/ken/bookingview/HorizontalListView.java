@@ -35,12 +35,11 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
-import android.view.animation.Interpolator;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Interpolator;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
@@ -162,7 +161,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			final int distanceX = width * position;
 			final int diff = position - mCurrentPosition;
 			final int reservedX = RESERVED_VIEW_COUNT * width;
-			Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
+//			Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
 			// simulate fast scrolling
 			if (diff > FAST_SCROLLING_COUNT) {
 				mSimulateNextX = distanceX - reservedX;

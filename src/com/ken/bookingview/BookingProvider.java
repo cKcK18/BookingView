@@ -44,7 +44,7 @@ public class BookingProvider extends ContentProvider {
 
 	static final String TABLE_NAME = "booking";
 	static final String PARAMETER_NOTIFY = "notify";
-	 
+
 	static final String COLUMN_ID = "_id";
 	static final String COLUMN_NAME = "name";
 	static final String COLUMN_YEAR = "year";
@@ -55,26 +55,30 @@ public class BookingProvider extends ContentProvider {
 	static final String COLUMN_PHONE_NUMBER = "phoneNumber";
 	static final String COLUMN_SERVICE_ITEMS = "serviceItems";
 	static final String COLUMN_REQUIRED_TIME = "requiredTime";
+	
+	private long mLastID = -1;
 
 	/**
 	 * The content:// style URL for this table
 	 */
-	static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME + "?" + PARAMETER_NOTIFY + "=true");
+	static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME + "?" + PARAMETER_NOTIFY
+			+ "=true");
 
 	/**
 	 * The content:// style URL for this table. When this Uri is used, no notification is sent if the content changes.
 	 */
-	static final Uri CONTENT_URI_NO_NOTIFICATION = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME + "?" + PARAMETER_NOTIFY
-			+ "=false");
+	static final Uri CONTENT_URI_NO_NOTIFICATION = Uri.parse("content://" + AUTHORITY + "/" + TABLE_NAME + "?"
+			+ PARAMETER_NOTIFY + "=false");
 
 	private DatabaseHelper mOpenHelper;
 
 	@Override
 	public boolean onCreate() {
-		if (LOGD) Log.d(TAG, "[onCreate]");
 		mOpenHelper = new DatabaseHelper(getContext());
 		// open to read and write
 		mOpenHelper.getWritableDatabase();
+		// set a reference to outer
+		((BookingApplication) getContext()).setBookingProvider(this);
 		return true;
 	}
 
@@ -98,10 +102,36 @@ public class BookingProvider extends ContentProvider {
 		Cursor result = qb.query(db, projection, args.where, args.args, null, null, sortOrder);
 		result.setNotificationUri(getContext().getContentResolver(), uri);
 
+		if (mLastID == -1) {
+			mLastID = getLastID(result);
+		}
+
 		return result;
 	}
 
-	private static long dbInsertAndCheck(DatabaseHelper helper, SQLiteDatabase db, String table, String nullColumnHack, ContentValues values) {
+	private long getLastID(Cursor cursor) {
+		int lastID = -1;
+		if (cursor == null || cursor.getCount() == 0) {
+			return lastID;
+		}
+		final boolean succeeded = cursor.moveToLast();
+		if (succeeded) {
+			final int idIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_ID);
+			lastID = cursor.getInt(idIndex);
+		}
+		return lastID;
+	}
+
+	public long generateNewId() {
+		if (mLastID < 0) {
+			throw new RuntimeException("Error: last id was not initialized");
+		}
+		mLastID += 1;
+		return mLastID;
+	}
+
+	private static long dbInsertAndCheck(DatabaseHelper helper, SQLiteDatabase db, String table, String nullColumnHack,
+			ContentValues values) {
 		if (!values.containsKey(BaseColumns._ID)) {
 			throw new RuntimeException("Error: attempting to add item without specifying an id");
 		}
@@ -153,8 +183,7 @@ public class BookingProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count = db.delete(args.table, args.where, args.args);
-		if (count > 0)
-			sendNotify(uri);
+		if (count > 0) sendNotify(uri);
 
 		return count;
 	}
@@ -166,8 +195,7 @@ public class BookingProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count = db.update(args.table, values, args.where, args.args);
-		if (count > 0)
-			sendNotify(uri);
+		if (count > 0) sendNotify(uri);
 
 		return count;
 	}
@@ -201,16 +229,16 @@ public class BookingProvider extends ContentProvider {
 			if (LOGD) Log.d(TAG, "creating new booking database");
 
             db.execSQL("CREATE TABLE " + TABLE_NAME + " (" +
-            		COLUMN_ID +  " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            		COLUMN_NAME + " TEXT NOT NULL," +
-            		COLUMN_YEAR + " INTEGER NOT NULL," +
-            		COLUMN_MONTH + " INTEGER NOT NULL," +
-            		COLUMN_DATE + " INTEGER NOT NULL," +
-            		COLUMN_HOUR + " INTEGER NOT NULL," +
-            		COLUMN_MINUTE + " INTEGER NOT NULL," +
-            		COLUMN_PHONE_NUMBER + " TEXT NOT NULL," +
-            		COLUMN_SERVICE_ITEMS + " TEXT NOT NULL," +
-            		COLUMN_REQUIRED_TIME + " TEXT NOT NULL" +
+                    COLUMN_ID +  " INTEGER PRIMARY KEY," +
+                    COLUMN_NAME + " TEXT NOT NULL," +
+                    COLUMN_YEAR + " INTEGER NOT NULL," +
+                    COLUMN_MONTH + " INTEGER NOT NULL," +
+                    COLUMN_DATE + " INTEGER NOT NULL," +
+                    COLUMN_HOUR + " INTEGER NOT NULL," +
+                    COLUMN_MINUTE + " INTEGER NOT NULL," +
+                    COLUMN_PHONE_NUMBER + " TEXT NOT NULL," +
+                    COLUMN_SERVICE_ITEMS + " TEXT NOT NULL," +
+                    COLUMN_REQUIRED_TIME + " TEXT NOT NULL" +
                     ");");
 		}
 
