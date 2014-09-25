@@ -197,9 +197,11 @@ public class BookingDataManager {
 
 	public ArrayList<BookingData> getBookingListByYear(int year) {
 		final ArrayList<BookingData> list = new ArrayList<BookingData>();
-		for (BookingData timeSheet : mBookingList) {
-			if (year == timeSheet.bookingYear) {
-				list.add(timeSheet);
+		if (mBookingList != null) {
+			for (BookingData timeSheet : mBookingList) {
+				if (year == timeSheet.bookingYear) {
+					list.add(timeSheet);
+				}
 			}
 		}
 		return list;
@@ -207,9 +209,11 @@ public class BookingDataManager {
 
 	public ArrayList<BookingData> getBookingListByMonth(int year, int month) {
 		final ArrayList<BookingData> list = new ArrayList<BookingData>();
-		for (BookingData timeSheet : mBookingList) {
-			if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth) {
-				list.add(timeSheet);
+		if (mBookingList != null) {
+			for (BookingData timeSheet : mBookingList) {
+				if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth) {
+					list.add(timeSheet);
+				}
 			}
 		}
 		return list;
@@ -217,9 +221,11 @@ public class BookingDataManager {
 
 	public ArrayList<BookingData> getBookingListByDate(int year, int month, int date) {
 		final ArrayList<BookingData> list = new ArrayList<BookingData>();
-		for (BookingData timeSheet : mBookingList) {
-			if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth && date == timeSheet.bookingDate) {
-				list.add(timeSheet);
+		if (mBookingList != null) {
+			for (BookingData timeSheet : mBookingList) {
+				if (year == timeSheet.bookingYear && month == timeSheet.bookingMonth && date == timeSheet.bookingDate) {
+					list.add(timeSheet);
+				}
 			}
 		}
 		return list;

@@ -35,6 +35,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -46,29 +47,37 @@ import android.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
 
+	public static final int VISIBLE_DATE_COUNT = 7;
+	public static final int VISIBLE_DATE_IN_CENTER = VISIBLE_DATE_COUNT / 2;
+
+	// simulate fast scrolling through setSelection()
+	private static final int FAST_SCROLLING_COUNT = 65;
+	private static final int RESERVED_VIEW_COUNT = 20;
+
 	public boolean mAlwaysOverrideTouch = true;
 	protected ListAdapter mAdapter;
 	private int mLeftViewIndex = -1;
 	private int mRightViewIndex = 0;
 	protected int mCurrentX;
+	protected int mInCenterPositionX;
 	protected int mNextX;
 	private int mMaxX = Integer.MAX_VALUE;
-	private int mCurrentPosition;
 	private int mDisplayOffset = 0;
+	private int mSelectedPosition;
 	protected Scroller mScroller;
 	private GestureDetector mGesture;
 	private Queue<View> mRemovedViewQueue = new LinkedList<View>();
 	private OnItemSelectedListener mOnItemSelected;
 	private OnItemClickListener mOnItemClicked;
+	private OnScrollChangedListener mOnScrollChanged;
 	private boolean mDataChanged = false;
-
-	// simulate fast scrolling through setSelection()
-	private static final int FAST_SCROLLING_COUNT = 65;
-	private static final int RESERVED_VIEW_COUNT = 20;
-	private static final int ACTIVED_COUNT = BookingActivity.VISIBLE_DATE_COUNT;
-
+	private boolean mAlignInCenter = true;
 	private boolean mSimulateFastScrolling = false;
 	private int mSimulateNextX = -1;
+
+	public interface OnScrollChangedListener {
+		void onScrollCompleted(int dateIndex);
+	}
 
 	private static class ScrollInterpolator implements Interpolator {
 		public ScrollInterpolator() {
@@ -80,6 +89,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		}
 	}
 
+	private final Runnable mAlignInCenterRunnable = new Runnable() {
+		@Override
+		public void run() {
+			alignInCenter();
+		}
+	};
+
 	public HorizontalListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		initView();
@@ -90,9 +106,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mRightViewIndex = 0;
 		mDisplayOffset = 0;
 		mCurrentX = 0;
+		mInCenterPositionX = 0;
 		mNextX = 0;
 		mMaxX = Integer.MAX_VALUE;
-		mCurrentPosition = 0;
+		mSelectedPosition = 0;
 		mScroller = new Scroller(getContext(), new ScrollInterpolator());
 		mGesture = new GestureDetector(getContext(), mOnGesture);
 	}
@@ -105,6 +122,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	@Override
 	public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
 		mOnItemClicked = listener;
+	}
+
+	public void setOnScrollChangedListener(OnScrollChangedListener listener) {
+		mOnScrollChanged = listener;
 	}
 
 	private DataSetObserver mDataObserver = new DataSetObserver() {
@@ -134,8 +155,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 	@Override
 	public View getSelectedView() {
-		// TODO: implement
-		return null;
+		return getChildAt(VISIBLE_DATE_IN_CENTER);
 	}
 
 	@Override
@@ -158,15 +178,16 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	public void setSelection(int position) {
 		if (getChildCount() != 0) {
 			final int width = getChildAt(0).getWidth();
-			final int distanceX = width * position;
-			final int diff = position - mCurrentPosition;
+			final int inCenterPosition = position - VISIBLE_DATE_IN_CENTER;
+			final int distanceX = width * inCenterPosition;
+			final int diff = inCenterPosition - mSelectedPosition;
 			final int reservedX = RESERVED_VIEW_COUNT * width;
-//			Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
+			// Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
 			// simulate fast scrolling
 			if (diff > FAST_SCROLLING_COUNT) {
 				mSimulateNextX = distanceX - reservedX;
-				mLeftViewIndex = position - RESERVED_VIEW_COUNT - 2;
-				mRightViewIndex = position - RESERVED_VIEW_COUNT + ACTIVED_COUNT;
+				mLeftViewIndex = inCenterPosition - RESERVED_VIEW_COUNT - 2;
+				mRightViewIndex = inCenterPosition - RESERVED_VIEW_COUNT + VISIBLE_DATE_COUNT;
 				mSimulateFastScrolling = true;
 			} else if (diff < -FAST_SCROLLING_COUNT) {
 				// TODO implement
@@ -231,8 +252,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		fillList(dx);
 		positionItems(dx);
 
+		final int childWidth = getChildAt(0).getWidth();
 		mCurrentX = mNextX;
-		mCurrentPosition = mCurrentX / getChildAt(0).getMeasuredWidth();
+		mInCenterPositionX = mCurrentX + VISIBLE_DATE_IN_CENTER * childWidth;
+		mSelectedPosition = mInCenterPositionX / childWidth;
 
 		if (!mScroller.isFinished()) {
 			post(new Runnable() {
@@ -316,6 +339,28 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		}
 	}
 
+	private void alignInCenter() {
+		final int count = getChildCount();
+		if (count == 0) {
+			return;
+		}
+		final int width = getChildAt(0).getWidth();
+		final int right = getChildAt(0).getRight();
+		Log.d("kenchen", String.format("[alignInCenter] right: %d, width: %d", right, width));
+		if (right == width) {
+			return;
+		}
+		final int dx;
+		if (right >= width / 2) {
+			dx = width - right;
+		} else {
+			dx = -right;
+		}
+		Log.d("kenchen", String.format("[alignInCenter] dx: %d", dx));
+		mScroller.startScroll(mNextX, 0, dx, 0, 200);
+		requestLayout();
+	}
+
 	public synchronized void scrollTo(int x) {
 		mScroller.startScroll(mNextX, 0, x - mNextX, 0);
 		requestLayout();
@@ -384,11 +429,9 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 					}
 					break;
 				}
-
 			}
 			return true;
 		}
-
 	};
 
 }

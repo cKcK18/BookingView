@@ -123,11 +123,7 @@ public class BookingProvider extends ContentProvider {
 	}
 
 	public long generateNewId() {
-		if (mLastID < 0) {
-			throw new RuntimeException("Error: last id was not initialized");
-		}
-		mLastID += 1;
-		return mLastID;
+		return ++mLastID;
 	}
 
 	private static long dbInsertAndCheck(DatabaseHelper helper, SQLiteDatabase db, String table, String nullColumnHack,

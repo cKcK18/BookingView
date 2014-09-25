@@ -1,6 +1,7 @@
 package com.ken.bookingview;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,13 +15,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ken.bookingview.BookingData.ServiceItems;
+import com.ken.bookingview.HorizontalListView.OnScrollChangedListener;
 
-public class BookingActivity extends FragmentActivity {
+public class BookingActivity extends FragmentActivity implements OnScrollChangedListener {
 
-	public static int VISIBLE_DATE_COUNT = 7;
-	public static int VISIBLE_DATE_IN_CENTER = VISIBLE_DATE_COUNT / 2;
+	private static final int TRIGGER_FROM_ARROW = 0;
+	private static final int TRIGGER_FROM_CALENDAR = 1;
+	private static final int TRIGGER_FROM_PAGER = 2;
 
-	private TextView mDateView;
+	private TextView mMonthView;
 	private HorizontalListView mCalendarListView;
 	private ViewPager mPager;
 	private PagerAdapter mPagerAdapter;
@@ -39,6 +42,7 @@ public class BookingActivity extends FragmentActivity {
 		backButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				finish();
 			}
 		});
 
@@ -46,28 +50,31 @@ public class BookingActivity extends FragmentActivity {
 		leftArrowButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final int dateIndex = CalendarUtils.getIndexWithLastMonth();
+				final Calendar calendar = DateUilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(-1);
+				final int dateIndex = DateUilities.getIndexByCalendar(calendar);
 				mPager.setCurrentItem(dateIndex);
-				mDateView.setText(CalendarUtils.getStringOfYearAndLastMonth());
+				mMonthView.setText(getStringWithYearAndMonth(calendar));
 			}
 		});
 
-		mDateView = (TextView) findViewById(R.id.booking_date);
-		mDateView.setText(CalendarUtils.getStringOfYearAndMonth());
+		mMonthView = (TextView) findViewById(R.id.booking_month);
+		mMonthView.setText(getStringWithYearAndMonth(Calendar.getInstance()));
 
 		ImageButton rightArrowButton = (ImageButton) findViewById(R.id.booking_right_arrow);
 		rightArrowButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final int dateIndex = CalendarUtils.getIndexWithNextMonth();
+				final Calendar calendar = DateUilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(1);
+				final int dateIndex = DateUilities.getIndexByCalendar(calendar);
 				mPager.setCurrentItem(dateIndex);
-				mDateView.setText(CalendarUtils.getStringOfYearAndNextMonth());
+				mMonthView.setText(getStringWithYearAndMonth(calendar));
 			}
 		});
 
 		//
-		mCalendarListView = (HorizontalListView) findViewById(R.id.calendar_list_view);
-		mCalendarListView.setAdapter(new CalendarAdapter(this));
+		mCalendarListView = (HorizontalListView) findViewById(R.id.date_list_view);
+		mCalendarListView.setAdapter(new DateAdapter(this));
+		mCalendarListView.setOnScrollChangedListener(this);
 
 		// Instantiate a ViewPager and a PagerAdapter.
 		mPager = (ViewPager) findViewById(R.id.timesheet_pager);
@@ -75,73 +82,49 @@ public class BookingActivity extends FragmentActivity {
 		mPager.setAdapter(mPagerAdapter);
 		mPager.setOnPageChangeListener(new SimpleOnPageChangeListener() {
 			@Override
-			public void onPageSelected(final int position) {
-				mHandler.postDelayed(new Runnable() {
-					@Override
-					public void run() {
-						final int fixInCenter = position >= VISIBLE_DATE_IN_CENTER ? position - VISIBLE_DATE_IN_CENTER
-								: 0;
-						mCalendarListView.setSelection(fixInCenter);
-					}
-				}, 100);
+			public void onPageSelected(int dateIndex) {
+				mCalendarListView.setSelection(dateIndex);
 			}
 		});
+	}
+
+	private String getStringWithYearAndMonth(Calendar calendar) {
+		return String.format("%d月 %d", calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR));
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		mPager.setCurrentItem(CalendarUtils.getIndexOfCurrentDay());
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mPager.setCurrentItem(DateUilities.getIndexOfToday());
+			}
+		}, 100);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final BookingApplication app = (BookingApplication) getApplicationContext();
-				final long id = app.getBookingProvider().generateNewId();
-				final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 23, 1, 20, "0985091242",
-						new ArrayList<ServiceItems>(), "1.5h");
-				BookingDataManager.getInstance().writeBookingData(data);
-			}
-		}, 2000);
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final BookingApplication app = (BookingApplication) getApplicationContext();
-				final long id = app.getBookingProvider().generateNewId();
-				final BookingData data = new BookingData(id, "ken chen", 2014, 9, 23, 1, 20, "0985091642",
-						new ArrayList<ServiceItems>(), "1.5h");
-				BookingDataManager.getInstance().writeBookingData(data);
-			}
-		}, 4000);
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final BookingApplication app = (BookingApplication) getApplicationContext();
-				final long id = app.getBookingProvider().generateNewId();
-				final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 23, 2, 20, "0985091242",
-						new ArrayList<ServiceItems>(), "1.5h");
-				BookingDataManager.getInstance().writeBookingData(data);
-			}
-		}, 6000);
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				final BookingApplication app = (BookingApplication) getApplicationContext();
-				final long id = app.getBookingProvider().generateNewId();
-				final BookingData data = new BookingData(id, "ken chen", 2014, 9, 23, 4, 20, "0985091242",
-						new ArrayList<ServiceItems>(), "1.5h");
-				BookingDataManager.getInstance().writeBookingData(data);
-			}
-		}, 8000);
+//		mHandler.postDelayed(new Runnable() {
+//			@Override
+//			public void run() {
+//				final BookingApplication app = (BookingApplication) getApplicationContext();
+//				final long id = app.getBookingProvider().generateNewId();
+//				final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 27, 1, 20, "0985091242",
+//						new ArrayList<ServiceItems>(), "1.5h");
+//				BookingDataManager.getInstance().writeBookingData(data);
+//			}
+//		}, 2000);
 	}
 
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+	}
+
+	@Override
+	public void onScrollCompleted(int dateIndex) {
 	}
 }

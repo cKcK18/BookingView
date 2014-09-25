@@ -44,7 +44,7 @@ public class TimeSheetPagerAdapter extends FragmentStatePagerAdapter {
 
 	@Override
 	public int getCount() {
-		return CalendarUtils.getTotalDays();
+		return DateUilities.getTotalDays();
 	}
 
 	@Override
