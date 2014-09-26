@@ -172,9 +172,23 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 	@Override
 	public void setSelection(int position) {
+		if (position == mInCenterPositionX) {
+			return;
+		}
+		// adjust the position and let the position limit in (3, MAX - 3)
+		final int totalPosition = mAdapter.getCount();
+		final int adjustPosition;
+		if (position < VISIBLE_DATE_IN_CENTER) {
+			adjustPosition = VISIBLE_DATE_IN_CENTER;
+		} else if (position > totalPosition - VISIBLE_DATE_IN_CENTER) {
+			adjustPosition = totalPosition - VISIBLE_DATE_IN_CENTER;
+		} else {
+			adjustPosition = position;
+		}
+
 		if (getChildCount() != 0) {
 			final int width = getChildAt(0).getWidth();
-			final int inCenterPosition = position - VISIBLE_DATE_IN_CENTER;
+			final int inCenterPosition = adjustPosition - VISIBLE_DATE_IN_CENTER;
 			final int distanceX = width * inCenterPosition;
 			final int diff = inCenterPosition - mSelectedPosition;
 			final int reservedX = RESERVED_VIEW_COUNT * width;
@@ -261,8 +275,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 					mSimulateFastScrolling = false;
 				}
 			});
-		} else if (mActionUp && mOnSelectedlChanged != null) {
-			mOnSelectedlChanged.onSelectedChanged(mSelectedPosition);
+		} else if (mActionUp) {
+			if (mOnSelectedlChanged != null) {
+				mOnSelectedlChanged.onSelectedChanged(mSelectedPosition);
+			}
 		}
 	}
 
