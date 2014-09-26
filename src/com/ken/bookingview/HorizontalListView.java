@@ -71,9 +71,12 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	private OnItemClickListener mOnItemClicked;
 	private OnScrollChangedListener mOnScrollChanged;
 	private boolean mDataChanged = false;
-	private boolean mAlignInCenter = true;
 	private boolean mSimulateFastScrolling = false;
 	private int mSimulateNextX = -1;
+
+	// scroll state
+	private boolean mOnScroll;
+	private boolean mOnFling;
 
 	public interface OnScrollChangedListener {
 		void onScrollCompleted(int dateIndex);
@@ -88,13 +91,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			return t * t * t * t * t + 1;
 		}
 	}
-
-	private final Runnable mAlignInCenterRunnable = new Runnable() {
-		@Override
-		public void run() {
-			alignInCenter();
-		}
-	};
 
 	public HorizontalListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -339,28 +335,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		}
 	}
 
-	private void alignInCenter() {
-		final int count = getChildCount();
-		if (count == 0) {
-			return;
-		}
-		final int width = getChildAt(0).getWidth();
-		final int right = getChildAt(0).getRight();
-		Log.d("kenchen", String.format("[alignInCenter] right: %d, width: %d", right, width));
-		if (right == width) {
-			return;
-		}
-		final int dx;
-		if (right >= width / 2) {
-			dx = width - right;
-		} else {
-			dx = -right;
-		}
-		Log.d("kenchen", String.format("[alignInCenter] dx: %d", dx));
-		mScroller.startScroll(mNextX, 0, dx, 0, 200);
-		requestLayout();
-	}
-
 	public synchronized void scrollTo(int x) {
 		mScroller.startScroll(mNextX, 0, x - mNextX, 0);
 		requestLayout();
@@ -368,21 +342,56 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 	@Override
 	public boolean dispatchTouchEvent(MotionEvent ev) {
-		boolean handled = mGesture.onTouchEvent(ev);
+		final boolean handled = mGesture.onTouchEvent(ev);
+		final int action = ev.getAction();
+		switch (action & MotionEvent.ACTION_MASK) {
+		case MotionEvent.ACTION_UP:
+			if (mOnScroll) {
+				final int unit = getChildAt(0).getWidth();
+				final int finalX = mNextX;
+				final int remainer = finalX % unit;
+				final int offset = remainer < unit / 2 ? -remainer : unit - remainer;
+				mScroller.startScroll(mNextX, 0, offset, 0, 100);
+				requestLayout();
+			} else if (mOnFling) {
+				// nothing to do
+			}
+			mOnScroll = mOnFling = false;
+			break;
+		}
 		return handled;
+	}
+
+	protected boolean onDown(MotionEvent e) {
+		mScroller.forceFinished(true);
+		return true;
 	}
 
 	protected boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		synchronized (HorizontalListView.this) {
+			mOnScroll = false;
+			mOnFling = true;
+
 			mScroller.fling(mNextX, 0, (int) -velocityX, 0, 0, mMaxX, 0, 0);
+			final int unit = getChildAt(0).getWidth();
+			final int finalX = mScroller.getFinalX();
+			final int remainer = finalX % unit;
+			final int offset = remainer < unit / 2 ? -remainer : unit - remainer;
+			final int adjustFinalX = finalX + offset;
+			mScroller.setFinalX(adjustFinalX);
 		}
 		requestLayout();
 
 		return true;
 	}
 
-	protected boolean onDown(MotionEvent e) {
-		mScroller.forceFinished(true);
+	protected boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+		synchronized (HorizontalListView.this) {
+			mOnScroll = true;
+			mNextX += (int) distanceX;
+		}
+		requestLayout();
+
 		return true;
 	}
 
@@ -400,12 +409,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 		@Override
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-			synchronized (HorizontalListView.this) {
-				mNextX += (int) distanceX;
-			}
-			requestLayout();
-
-			return true;
+			return HorizontalListView.this.onScroll(e1, e2, distanceX, distanceY);
 		}
 
 		@Override

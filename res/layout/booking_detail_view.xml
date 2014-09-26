@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/booking_detail_title"
+        android:text="@string/booking_detail_add_title"
         android:textColor="#888888"
         android:textSize="20sp" />
 

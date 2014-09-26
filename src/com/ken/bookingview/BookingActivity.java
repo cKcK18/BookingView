@@ -1,6 +1,5 @@
 package com.ken.bookingview;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -11,10 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.ken.bookingview.BookingData.ServiceItems;
 import com.ken.bookingview.HorizontalListView.OnScrollChangedListener;
 
 public class BookingActivity extends FragmentActivity implements OnScrollChangedListener {
@@ -43,6 +42,14 @@ public class BookingActivity extends FragmentActivity implements OnScrollChanged
 			@Override
 			public void onClick(View v) {
 				finish();
+			}
+		});
+
+		Button toadyButton = (Button) findViewById(R.id.booking_today);
+		toadyButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				mPager.setCurrentItem(DateUilities.getIndexOfToday());
 			}
 		});
 
@@ -107,16 +114,16 @@ public class BookingActivity extends FragmentActivity implements OnScrollChanged
 	protected void onResume() {
 		super.onResume();
 
-//		mHandler.postDelayed(new Runnable() {
-//			@Override
-//			public void run() {
-//				final BookingApplication app = (BookingApplication) getApplicationContext();
-//				final long id = app.getBookingProvider().generateNewId();
-//				final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 27, 1, 20, "0985091242",
-//						new ArrayList<ServiceItems>(), "1.5h");
-//				BookingDataManager.getInstance().writeBookingData(data);
-//			}
-//		}, 2000);
+		// mHandler.postDelayed(new Runnable() {
+		// @Override
+		// public void run() {
+		// final BookingApplication app = (BookingApplication) getApplicationContext();
+		// final long id = app.getBookingProvider().generateNewId();
+		// final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 27, 1, 20, "0985091242",
+		// new ArrayList<ServiceItems>(), "1.5h");
+		// BookingDataManager.getInstance().writeBookingData(data);
+		// }
+		// }, 2000);
 	}
 
 	@Override

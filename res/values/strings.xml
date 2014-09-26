@@ -4,9 +4,13 @@
     <string name="app_name">bookingView</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    
+
+    <!-- for booking view -->
+    <string name="booking_view_title">我的預約</string>
+    <string name="booking_view_today">今天</string>
+    <string name="booking_view_date">月</string>
+
     <!-- for booking detail view -->
-    <string name="booking_detail_title">我的預約</string>
     <string name="booking_detail_add_title">新增預約</string>
     <string name="booking_detail_name">預約人</string>
     <string name="booking_detail_date">預約時間</string>
