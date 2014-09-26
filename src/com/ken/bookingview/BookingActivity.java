@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.ken.bookingview.HorizontalListView.OnScrollChangedListener;
+import com.ken.bookingview.HorizontalListView.OnSelectedChangedListener;
 
-public class BookingActivity extends FragmentActivity implements OnScrollChangedListener {
+public class BookingActivity extends FragmentActivity implements OnSelectedChangedListener {
 
 	private static final int TRIGGER_FROM_ARROW = 0;
 	private static final int TRIGGER_FROM_CALENDAR = 1;
@@ -132,6 +132,6 @@ public class BookingActivity extends FragmentActivity implements OnScrollChanged
 	}
 
 	@Override
-	public void onScrollCompleted(int dateIndex) {
+	public void onSelectedChanged(int dateIndex) {
 	}
 }

@@ -35,7 +35,6 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -69,17 +68,18 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	private Queue<View> mRemovedViewQueue = new LinkedList<View>();
 	private OnItemSelectedListener mOnItemSelected;
 	private OnItemClickListener mOnItemClicked;
-	private OnScrollChangedListener mOnScrollChanged;
+	private OnSelectedChangedListener mOnSelectedlChanged;
 	private boolean mDataChanged = false;
 	private boolean mSimulateFastScrolling = false;
 	private int mSimulateNextX = -1;
 
 	// scroll state
-	private boolean mOnScroll;
-	private boolean mOnFling;
+	private boolean mOnScroll = false;
+	private boolean mOnFling = false;
+	private boolean mActionUp = false;
 
-	public interface OnScrollChangedListener {
-		void onScrollCompleted(int dateIndex);
+	public interface OnSelectedChangedListener {
+		void onSelectedChanged(int dateIndex);
 	}
 
 	private static class ScrollInterpolator implements Interpolator {
@@ -120,8 +120,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mOnItemClicked = listener;
 	}
 
-	public void setOnScrollChangedListener(OnScrollChangedListener listener) {
-		mOnScrollChanged = listener;
+	public void setOnScrollChangedListener(OnSelectedChangedListener listener) {
+		mOnSelectedlChanged = listener;
 	}
 
 	private DataSetObserver mDataObserver = new DataSetObserver() {
@@ -261,6 +261,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 					mSimulateFastScrolling = false;
 				}
 			});
+		} else if (mActionUp && mOnSelectedlChanged != null) {
+			mOnSelectedlChanged.onSelectedChanged(mSelectedPosition);
 		}
 	}
 
@@ -345,6 +347,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		final boolean handled = mGesture.onTouchEvent(ev);
 		final int action = ev.getAction();
 		switch (action & MotionEvent.ACTION_MASK) {
+		case MotionEvent.ACTION_DOWN:
+			mActionUp = false;
+			mOnScroll = mOnFling = false;
+			break;
 		case MotionEvent.ACTION_UP:
 			if (mOnScroll) {
 				final int unit = getChildAt(0).getWidth();
@@ -356,7 +362,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			} else if (mOnFling) {
 				// nothing to do
 			}
-			mOnScroll = mOnFling = false;
+			mActionUp = true;
 			break;
 		}
 		return handled;

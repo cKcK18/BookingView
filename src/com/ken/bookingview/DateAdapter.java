@@ -74,10 +74,10 @@ public class DateAdapter extends BaseAdapter {
 		final String shortString = dateFormat.format(calendar.getTime()).toUpperCase();
 		holder.dayOfWeekView.setText(shortString);
 		holder.dayView.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-		// DEBUG
-//		holder.dayView.setText(String.valueOf(position % 100));
+		// for debug use
+		// holder.dayView.setText(String.valueOf(position % 100));
 		// normally, we don't have to call the invalidate function because of horizontal list view bug.
-		 convertView.invalidate();
+		convertView.invalidate();
 
 		return convertView;
 	}
