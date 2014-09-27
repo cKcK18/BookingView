@@ -20,4 +20,16 @@
     <string name="booking_detail_confirm">確定</string>
     <string name="booking_detail_cancel">取消</string>
 
+    <string-array name="sex_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="service_arrays">
+        <item>Long Hair</item>
+        <item>Short Hair</item>
+        <item>Dye</item>
+        <item>Perm</item>
+    </string-array>
+
 </resources>

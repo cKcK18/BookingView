@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <com.ken.bookingview.BookingDetailView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="500dp"
+    android:layout_height="wrap_content"
     android:background="#FFFFFF"
     android:orientation="vertical"
     android:padding="30dp" >
@@ -44,7 +44,7 @@
 
         <Spinner
             android:id="@+id/booking_detail_sex_spinner"
-            android:layout_width="70dp"
+            android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -87,6 +87,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
             android:src="@drawable/icon_arrow" />
     </RelativeLayout>
 
@@ -158,6 +159,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
             android:src="@drawable/icon_arrow" />
     </RelativeLayout>
 
@@ -180,10 +182,10 @@
 
     <Button
         android:id="@+id/booking_detail_confirm"
-        android:layout_width="336dp"
+        android:layout_width="400dp"
         android:layout_height="54dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="33dp"
+        android:layout_marginBottom="15dp"
         android:background="#17C9B4"
         android:text="@string/booking_detail_confirm"
         android:textColor="#FFFFFF"
@@ -191,10 +193,10 @@
 
     <Button
         android:id="@+id/booking_detail_cancel"
-        android:layout_width="336dp"
+        android:layout_width="400dp"
         android:layout_height="54dp"
         android:layout_gravity="center"
-        android:layout_marginBottom="33dp"
+        android:layout_marginBottom="3dp"
         android:background="#17C9B4"
         android:text="@string/booking_detail_cancel"
         android:textColor="#FFFFFF"

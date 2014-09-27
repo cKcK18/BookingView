@@ -35,6 +35,7 @@ import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -68,7 +69,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	private Queue<View> mRemovedViewQueue = new LinkedList<View>();
 	private OnItemSelectedListener mOnItemSelected;
 	private OnItemClickListener mOnItemClicked;
-	private OnSelectedChangedListener mOnSelectedlChanged;
+	private OnSelectedItemChangedListener mOnSelectedItemChanged;
 	private boolean mDataChanged = false;
 	private boolean mSimulateFastScrolling = false;
 	private int mSimulateNextX = -1;
@@ -76,10 +77,10 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	// scroll state
 	private boolean mOnScroll = false;
 	private boolean mOnFling = false;
-	private boolean mActionUp = false;
+	private boolean mActionUp = true;
 
-	public interface OnSelectedChangedListener {
-		void onSelectedChanged(int dateIndex);
+	public interface OnSelectedItemChangedListener {
+		void onSelectedItemChanged(int dateIndex);
 	}
 
 	private static class ScrollInterpolator implements Interpolator {
@@ -108,6 +109,16 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mSelectedPosition = 0;
 		mScroller = new Scroller(getContext(), new ScrollInterpolator());
 		mGesture = new GestureDetector(getContext(), mOnGesture);
+		setOnHierarchyChangeListener(new OnHierarchyChangeListener() {
+			@Override
+			public void onChildViewRemoved(View parent, View child) {
+				((DateItemView) child).drawFocus(false);
+			}
+
+			@Override
+			public void onChildViewAdded(View parent, View child) {
+			}
+		});
 	}
 
 	@Override
@@ -120,8 +131,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mOnItemClicked = listener;
 	}
 
-	public void setOnScrollChangedListener(OnSelectedChangedListener listener) {
-		mOnSelectedlChanged = listener;
+	public void setOnScrollChangedListener(OnSelectedItemChangedListener listener) {
+		mOnSelectedItemChanged = listener;
 	}
 
 	private DataSetObserver mDataObserver = new DataSetObserver() {
@@ -166,13 +177,15 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 	private synchronized void reset() {
 		initView();
+		// setSelection(DateUtilities.getIndexOfToday());
 		removeAllViewsInLayout();
 		requestLayout();
 	}
 
 	@Override
 	public void setSelection(int position) {
-		if (position == mInCenterPositionX) {
+		Log.d("kenchen", String.format("[setSelection] pos: %d/%d", position, mSelectedPosition));
+		if (position == mSelectedPosition) {
 			return;
 		}
 		// adjust the position and let the position limit in (3, MAX - 3)
@@ -188,16 +201,17 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 		if (getChildCount() != 0) {
 			final int width = getChildAt(0).getWidth();
-			final int inCenterPosition = adjustPosition - VISIBLE_DATE_IN_CENTER;
-			final int distanceX = width * inCenterPosition;
+			final int inCenterPosition = adjustPosition;
+			final int leftPosition = inCenterPosition - VISIBLE_DATE_IN_CENTER;
+			final int distanceX = width * leftPosition;
 			final int diff = inCenterPosition - mSelectedPosition;
 			final int reservedX = RESERVED_VIEW_COUNT * width;
 			// Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mCurrentPosition, position));
 			// simulate fast scrolling
 			if (diff > FAST_SCROLLING_COUNT) {
 				mSimulateNextX = distanceX - reservedX;
-				mLeftViewIndex = inCenterPosition - RESERVED_VIEW_COUNT - 2;
-				mRightViewIndex = inCenterPosition - RESERVED_VIEW_COUNT + VISIBLE_DATE_COUNT;
+				mLeftViewIndex = leftPosition - RESERVED_VIEW_COUNT - 2;
+				mRightViewIndex = leftPosition - RESERVED_VIEW_COUNT + VISIBLE_DATE_COUNT;
 				mSimulateFastScrolling = true;
 			} else if (diff < -FAST_SCROLLING_COUNT) {
 				// TODO implement
@@ -237,6 +251,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		if (mDataChanged) {
 			int oldCurrentX = mCurrentX;
 			initView();
+			// setSelection(DateUtilities.getIndexOfToday());
 			removeAllViewsInLayout();
 			mNextX = oldCurrentX;
 			mDataChanged = false;
@@ -267,6 +282,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mInCenterPositionX = mCurrentX + VISIBLE_DATE_IN_CENTER * childWidth;
 		mSelectedPosition = mInCenterPositionX / childWidth;
 
+		Log.d("kenchen", String.format("[onLayout] selected pos: %d", mSelectedPosition));
+
 		if (!mScroller.isFinished()) {
 			post(new Runnable() {
 				@Override
@@ -276,8 +293,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 				}
 			});
 		} else if (mActionUp) {
-			if (mOnSelectedlChanged != null) {
-				mOnSelectedlChanged.onSelectedChanged(mSelectedPosition);
+			if (mOnSelectedItemChanged != null) {
+				// draw a overlay rectangle
+				for (int i = 0; i < getChildCount(); ++i) {
+					final boolean focus = i == VISIBLE_DATE_IN_CENTER;
+					((DateItemView) getChildAt(i)).drawFocus(focus);
+				}
+				mOnSelectedItemChanged.onSelectedItemChanged(mSelectedPosition);
 			}
 		}
 	}

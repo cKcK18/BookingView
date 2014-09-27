@@ -1,0 +1,29 @@
+<com.ken.bookingview.DateItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/date_item_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#6063A8"
+    android:orientation="vertical"
+    android:paddingBottom="26px"
+    android:paddingTop="24px" >
+
+    <TextView
+        android:id="@+id/date_day_of_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#ABACCE"
+        android:textSize="12sp" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/date_day_of_month"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#ABACCE"
+        android:textSize="19sp" >
+    </TextView>
+
+</com.ken.bookingview.DateItemView>

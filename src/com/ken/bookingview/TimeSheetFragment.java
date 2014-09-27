@@ -72,7 +72,7 @@ public class TimeSheetFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 
 		mPageNumber = getArguments().getInt(ARG_PAGE);
-		mCalendar = DateUilities.getCalendarByIndex(mPageNumber);
+		mCalendar = DateUtilities.getCalendarByIndex(mPageNumber);
 		mAdapter = new TimeSheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
 				mCalendar.get(Calendar.DATE));
 		BookingDataManager.getInstance().setOnDataChangedListener(mAdapter);
