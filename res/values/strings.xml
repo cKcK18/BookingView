@@ -9,11 +9,15 @@
     <string name="booking_view_title">我的預約</string>
     <string name="booking_view_today">今天</string>
     <string name="booking_view_date">月</string>
+    <string name="booking_view_new">新</string>
 
     <!-- for booking detail view -->
     <string name="booking_detail_add_title">新增預約</string>
     <string name="booking_detail_name">預約人</string>
     <string name="booking_detail_date">預約時間</string>
+    <string name="booking_detail_year">年</string>
+    <string name="booking_detail_month">月</string>
+    <string name="booking_detail_day">日</string>
     <string name="booking_detail_phone_number">聯絡電話</string>
     <string name="booking_detail_service_item">服務項目</string>
     <string name="booking_detail_required_time">所需時間</string>
@@ -24,7 +28,6 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
-
     <string-array name="service_arrays">
         <item>Long Hair</item>
         <item>Short Hair</item>

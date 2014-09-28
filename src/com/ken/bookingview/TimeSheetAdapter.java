@@ -20,19 +20,19 @@ public class TimeSheetAdapter extends BaseAdapter implements OnDateChangedListen
 	private final Context mContext;
 	private final int mYear;
 	private final int mMonth;
-	private final int mDate;
+	private final int mDay;
 	private ArrayList<BookingData> mBookingList;
 
 	private int mTimeSheetItemViewHeight = -1;
 
-	public TimeSheetAdapter(Context context, int year, int month, int date) {
+	public TimeSheetAdapter(Context context, int year, int month, int day) {
 		mContext = context;
 		mYear = year;
 		mMonth = month;
-		mDate = date;
+		mDay = day;
 
 		final BookingDataManager manager = BookingDataManager.getInstance();
-		mBookingList = manager.getBookingListByDate(year, month, date);
+		mBookingList = manager.getBookingListByDate(year, month, day);
 
 		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
 	}
@@ -57,7 +57,7 @@ public class TimeSheetAdapter extends BaseAdapter implements OnDateChangedListen
 		// find time sheet item first
 		BookingData timeSheetItem = null;
 		for (BookingData item : mBookingList) {
-			if (position == item.bookingHour) {
+			if (position == item.hourOfDay) {
 				timeSheetItem = item;
 				break;
 			}
@@ -75,16 +75,16 @@ public class TimeSheetAdapter extends BaseAdapter implements OnDateChangedListen
 
 	@Override
 	public void onDataReady() {
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDate);
-		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDate,
+		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay,
 						mBookingList.size()));
 		notifyDataSetInvalidated();
 	}
 
 	@Override
 	public void onDataChanged() {
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDate);;
-		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDate,
+		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);;
+		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay,
 				mBookingList.size()));
 		notifyDataSetInvalidated();
 	}

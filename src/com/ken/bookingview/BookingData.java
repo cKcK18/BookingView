@@ -7,53 +7,51 @@ public class BookingData implements Serializable {
 
 	private static final long serialVersionUID = 12345678905566L;
 
-	public enum ServiceItems {
-		cut, shampoo, permanent, color, treatment
-	}
-
-	final long id;	// the same as the database id
-	String bookingName;
-	int bookingYear;
-	int bookingMonth;
-	int bookingDate;
-	int bookingHour;
-	int bookingMinutes;
+	final long id; // the same as the database id
+	String name;
+	String sex;
+	int year;
+	int month;
+	int day;
+	int hourOfDay;
+	int minute;
 	String phoneNumber;
-	ArrayList<ServiceItems> serviceItems;
+	ArrayList<String> serviceItems;
 	String requiredTime;
 
-	public BookingData(long id, String bookingName, int bookingYear, int bookingMonth, int bookingDate,
-			int bookingHour, int bookingMinutes, String phoneNumber, ArrayList<ServiceItems> serviceItem,
-			String requiredTime) {
+	public BookingData(long id, String name, String sex, int year, int month, int day, int hourOfDay, int minutes,
+			String phoneNumber, ArrayList<String> serviceItem, String requiredTime) {
 		this.id = id;
-		this.bookingName = bookingName;
-		this.bookingYear = bookingYear;
-		this.bookingMonth = bookingMonth;
-		this.bookingDate = bookingDate;
-		this.bookingHour = bookingHour;
-		this.bookingMinutes = bookingMinutes;
+		this.name = name;
+		this.sex = sex;
+		this.year = year;
+		this.month = month;
+		this.day = day;
+		this.hourOfDay = hourOfDay;
+		this.minute = minutes;
 		this.phoneNumber = phoneNumber;
 		this.serviceItems = serviceItem;
 		this.requiredTime = requiredTime;
 	}
 
 	public void setTimeSheetItem(BookingData timeSheetItem) {
-		bookingName = timeSheetItem.bookingName;
-		bookingYear = timeSheetItem.bookingYear;
-		bookingMonth = timeSheetItem.bookingMonth;
-		bookingDate = timeSheetItem.bookingDate;
-		bookingHour = timeSheetItem.bookingHour;
-		bookingMinutes = timeSheetItem.bookingMinutes;
+		name = timeSheetItem.name;
+		sex = timeSheetItem.sex;
+		year = timeSheetItem.year;
+		month = timeSheetItem.month;
+		day = timeSheetItem.day;
+		hourOfDay = timeSheetItem.hourOfDay;
+		minute = timeSheetItem.minute;
 		phoneNumber = timeSheetItem.phoneNumber;
 		serviceItems = timeSheetItem.serviceItems;
 		requiredTime = timeSheetItem.requiredTime;
 	}
-	
+
 	@Override
 	public String toString() {
-		return String.format(
-				"hash: %d, name: %s, date: %04d/%02d/%02d %02d:%02d, phoneNumber: %s, services: %s, requiredTime: %s",
-				hashCode(), bookingName, bookingYear, bookingMonth, bookingDate, bookingHour, bookingMinutes,
-				phoneNumber, serviceItems.toArray().toString(), requiredTime);
+		return String
+				.format("hash: %d, name: %s, sex: %s, date: %04d/%02d/%02d %02d:%02d, phoneNumber: %s, services: %s, requiredTime: %s",
+						hashCode(), name, sex, year, month, day, hourOfDay, minute, phoneNumber, serviceItems.toArray()
+								.toString(), requiredTime);
 	}
 }

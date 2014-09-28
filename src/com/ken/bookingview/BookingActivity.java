@@ -1,5 +1,6 @@
 package com.ken.bookingview;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -25,7 +26,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 	private static final int ACTION_PAGER = 4;
 
 	private enum State {
-		REVIEW, ADD
+		BOOKING, DETAIL
 	};
 
 	private TextView mMonthView;
@@ -34,7 +35,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 	private ImageButton mAddBookingDataButton;
 	private BookingDetailView mBookingDetailView;
 
-	private State mState = State.REVIEW;
+	private State mState = State.BOOKING;
 
 	private int mLastDateIndex = -100;
 	private boolean mDateListViewChanged = false;
@@ -112,7 +113,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 			@Override
 			public void onClick(View v) {
 				// final int tranY = getResources().getDisplayMetrics().heightPixels;
-				mState = State.ADD;
+				mState = State.DETAIL;
 				final boolean show = true;
 				final boolean animate = true;
 				mBookingDetailView.show(show, animate);
@@ -159,22 +160,15 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 	@Override
 	protected void onResume() {
 		super.onResume();
+	}
 
-		// mHandler.postDelayed(new Runnable() {
-		// @Override
-		// public void run() {
-		// final BookingApplication app = (BookingApplication) getApplicationContext();
-		// final long id = app.getBookingProvider().generateNewId();
-		// final BookingData data = new BookingData(id, "winnie hsu", 2014, 9, 27, 1, 20, "0985091242",
-		// new ArrayList<ServiceItems>(), "1.5h");
-		// BookingDataManager.getInstance().writeBookingData(data);
-		// }
-		// }, 2000);
+	public void backToBooking() {
+		mState = State.BOOKING;
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (mState == State.ADD) {
+		if (mState == State.DETAIL) {
 			final boolean show = false;
 			final boolean animate = true;
 			mBookingDetailView.show(show, animate);

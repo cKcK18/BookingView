@@ -15,8 +15,6 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.ken.bookingview.BookingData.ServiceItems;
-
 public class TimeSheetItemView extends View {
 
 	@SuppressWarnings("unused")
@@ -220,34 +218,35 @@ public class TimeSheetItemView extends View {
 	protected void onDraw(Canvas canvas) {
 		final Integer identity = (Integer) getTag(R.id.time_sheet_item_identity);
 		final BookingData data = (BookingData) getTag(R.id.time_sheet_item_info);
-		
+
 		canvas.drawText(identityToTime(identity), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
 		canvas.drawRect(mDivisionRect, mDivisionPaint);
 
 		// check any booking by booking name
 		final boolean hasBooking = data != null;
 		if (hasBooking) {
-			final ArrayList<ServiceItems> serviceList = data.serviceItems;
+			final ArrayList<String> serviceList = data.serviceItems;
 			final int serviceItemCount = serviceList != null ? serviceList.size() : 0;
 			// draw each service item
 			for (int i = 0; i < serviceItemCount; ++i) {
-				final ServiceItems item = serviceList.get(i);
+				final String item = serviceList.get(i);
 
 				final Rect rect = mServiceListBackgroundRect.get(i);
 				canvas.drawRect(rect, mServiceItemsBackgroundPaint);
 
 				final Point point = mServiceListPoint.get(i);
-				canvas.drawText(item.toString(), point.x, point.y, mServiceItemsPaint);
+				canvas.drawText(item, point.x, point.y, mServiceItemsPaint);
 			}
 
 			// draw contents
-			final String content = String.format("%02d:%02d  %s  %s", data.bookingHour, data.bookingMinutes,
-					data.bookingName, data.phoneNumber);
+			final String content = String.format("%02d:%02d  %s  %s", data.hourOfDay, data.minute, data.name,
+					data.phoneNumber);
 			canvas.drawText(content, mContentPoint.x, mContentPoint.y, mContentPaint);
 
 			// draw NEW
 			canvas.drawPath(mFlagTextBackgroundPath, mFlagTextBackgroundPaint);
-			canvas.drawText("New", mFlagTextPoint.x, mFlagTextPoint.y, mFlagTextPaint);
+			canvas.drawText(getResources().getString(R.string.booking_view_new), mFlagTextPoint.x, mFlagTextPoint.y,
+					mFlagTextPaint);
 		}
 
 		// draw end line

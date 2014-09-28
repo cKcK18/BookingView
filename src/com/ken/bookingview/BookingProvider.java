@@ -47,10 +47,11 @@ public class BookingProvider extends ContentProvider {
 
 	static final String COLUMN_ID = "_id";
 	static final String COLUMN_NAME = "name";
+	static final String COLUMN_SEX = "sex";
 	static final String COLUMN_YEAR = "year";
 	static final String COLUMN_MONTH = "month";
-	static final String COLUMN_DATE = "date";
-	static final String COLUMN_HOUR = "hour";
+	static final String COLUMN_DAY = "day";
+	static final String COLUMN_HOUR_OF_DAY = "hourOfDay";
 	static final String COLUMN_MINUTE = "minute";
 	static final String COLUMN_PHONE_NUMBER = "phoneNumber";
 	static final String COLUMN_SERVICE_ITEMS = "serviceItems";
@@ -141,6 +142,7 @@ public class BookingProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		final long rowId = dbInsertAndCheck(mOpenHelper, db, args.table, null, initialValues);
+		if (LOGD) Log.d(TAG, String.format("[insert] rowId: %d", rowId));
 		if (rowId <= 0) return null;
 
 		uri = ContentUris.withAppendedId(uri, rowId);
@@ -179,6 +181,7 @@ public class BookingProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count = db.delete(args.table, args.where, args.args);
+		if (LOGD) Log.d(TAG, String.format("[delete] count: %d", count));
 		if (count > 0) sendNotify(uri);
 
 		return count;
@@ -191,6 +194,7 @@ public class BookingProvider extends ContentProvider {
 
 		SQLiteDatabase db = mOpenHelper.getWritableDatabase();
 		int count = db.update(args.table, values, args.where, args.args);
+		if (LOGD) Log.d(TAG, String.format("[update] count: %d", count));
 		if (count > 0) sendNotify(uri);
 
 		return count;
@@ -227,10 +231,11 @@ public class BookingProvider extends ContentProvider {
             db.execSQL("CREATE TABLE " + TABLE_NAME + " (" +
                     COLUMN_ID +  " INTEGER PRIMARY KEY," +
                     COLUMN_NAME + " TEXT NOT NULL," +
+                    COLUMN_SEX + " TEXT NOT NULL," +
                     COLUMN_YEAR + " INTEGER NOT NULL," +
                     COLUMN_MONTH + " INTEGER NOT NULL," +
-                    COLUMN_DATE + " INTEGER NOT NULL," +
-                    COLUMN_HOUR + " INTEGER NOT NULL," +
+                    COLUMN_DAY + " INTEGER NOT NULL," +
+                    COLUMN_HOUR_OF_DAY + " INTEGER NOT NULL," +
                     COLUMN_MINUTE + " INTEGER NOT NULL," +
                     COLUMN_PHONE_NUMBER + " TEXT NOT NULL," +
                     COLUMN_SERVICE_ITEMS + " TEXT NOT NULL," +
