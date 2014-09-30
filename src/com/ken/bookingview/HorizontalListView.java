@@ -184,7 +184,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 
 	@Override
 	public void setSelection(int position) {
-		Log.d("kenchen", String.format("[setSelection] pos: %d/%d", position, mSelectedPosition));
+		Log.d("kenchen", String.format("[setSelection] pos: %d -> %d", mSelectedPosition, position));
 		if (position == mSelectedPosition) {
 			return;
 		}
@@ -281,8 +281,6 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 		mCurrentX = mNextX;
 		mInCenterPositionX = mCurrentX + VISIBLE_DATE_IN_CENTER * childWidth;
 		mSelectedPosition = mInCenterPositionX / childWidth;
-
-		Log.d("kenchen", String.format("[onLayout] selected pos: %d", mSelectedPosition));
 
 		if (!mScroller.isFinished()) {
 			post(new Runnable() {

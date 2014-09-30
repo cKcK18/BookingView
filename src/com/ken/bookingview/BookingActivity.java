@@ -1,6 +1,5 @@
 package com.ken.bookingview;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -214,7 +213,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 					String.format("[LEFT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
 							calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
-			Log.d("kenchen", String.format("[LEFT] index: %d", dateIndex));
+			Log.d("kenchen", String.format("[LEFT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
 
 			mDateListViewChanged = mPagerChanged = true;
@@ -230,7 +229,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 					String.format("[RIGHT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
 							calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
-			Log.d("kenchen", String.format("[RIGHT] index: %d", dateIndex));
+			Log.d("kenchen", String.format("[RIGHT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
 
 			mDateListViewChanged = mPagerChanged = true;

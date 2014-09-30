@@ -53,7 +53,9 @@ public class DateUtilities {
 	 */
 	public static Calendar getInstance(Calendar source) {
 		final Calendar calendar = Calendar.getInstance();
-		calendar.set(source.get(Calendar.YEAR), source.get(Calendar.MONTH), source.get(Calendar.DATE), 0, 0, 0);
+		calendar.set(Calendar.YEAR, source.get(Calendar.YEAR));
+		calendar.set(Calendar.MONTH, source.get(Calendar.MONTH));
+		calendar.set(Calendar.DATE, source.get(Calendar.DATE));
 		return calendar;
 	}
 

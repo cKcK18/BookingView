@@ -25,7 +25,7 @@ public class TimeSheetViewPager extends ViewPager {
 			fieldScroller = ViewPager.class.getDeclaredField("mScroller");
 			fieldScroller.setAccessible(true);
 			TimeSheetFixedSpeedScroller scroller = new TimeSheetFixedSpeedScroller(getContext(),
-					new DecelerateInterpolator(1.5f));
+					new DecelerateInterpolator(2.0f));
 			scroller.setFixedDuration(duration);
 			fieldScroller.set(this, scroller);
 		} catch (NoSuchFieldException e) {

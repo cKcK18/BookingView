@@ -18,10 +18,8 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +35,7 @@ import android.widget.ListView;
  */
 public class TimeSheetFragment extends Fragment {
 
+	@SuppressWarnings("unused")
 	private static final String TAG = TimeSheetFragment.class.getSimpleName();
 	/**
 	 * The argument key for the page number this fragment represents.
@@ -48,7 +47,6 @@ public class TimeSheetFragment extends Fragment {
 	 */
 	private int mPageNumber;
 
-	private ListView mListView;
 	private TimeSheetAdapter mAdapter;
 
 	private Calendar mCalendar;
@@ -65,7 +63,7 @@ public class TimeSheetFragment extends Fragment {
 	}
 
 	public TimeSheetFragment() {
-	} 
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,11 +79,11 @@ public class TimeSheetFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout containing a title and body text.
-		mListView = new ListView(getActivity());
-		mListView.setVelocityScale(0.5f);
-		mListView.setVerticalScrollBarEnabled(false);
-		mListView.setAdapter(mAdapter);
-		return mListView;
+		ListView listView = new ListView(getActivity());
+		listView.setVelocityScale(0.5f);
+		listView.setVerticalScrollBarEnabled(false);
+		listView.setAdapter(mAdapter);
+		return listView;
 	}
 
 	@Override
