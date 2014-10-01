@@ -53,7 +53,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 	// simulate fast scrolling through setSelection()
 	private static final int FAST_SCROLLING_COUNT = 65;
 	private static final int RESERVED_VIEW_COUNT = 20;
-
+	
 	public boolean mAlwaysOverrideTouch = true;
 	protected ListAdapter mAdapter;
 	private int mLeftViewIndex = -1;
@@ -216,7 +216,8 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 			} else if (diff < -FAST_SCROLLING_COUNT) {
 				// TODO implement
 			}
-			mScroller.startScroll(mNextX, 0, distanceX - mNextX, 0, 300);
+			final int duration = Math.abs(diff) <= 3 ? 150 : 300;
+			mScroller.startScroll(mNextX, 0, distanceX - mNextX, 0, duration);
 			requestLayout();
 		}
 	}
@@ -465,13 +466,13 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
 				int bottom = child.getBottom();
 				viewRect.set(left, top, right, bottom);
 				if (viewRect.contains((int) e.getX(), (int) e.getY())) {
+					final int selectedIndex = mLeftViewIndex + 1 + i;
+					HorizontalListView.this.setSelection(selectedIndex);
 					if (mOnItemClicked != null) {
-						mOnItemClicked.onItemClick(HorizontalListView.this, child, mLeftViewIndex + 1 + i,
-								mAdapter.getItemId(mLeftViewIndex + 1 + i));
+						mOnItemClicked.onItemClick(HorizontalListView.this, child, selectedIndex, mAdapter.getItemId(selectedIndex));
 					}
 					if (mOnItemSelected != null) {
-						mOnItemSelected.onItemSelected(HorizontalListView.this, child, mLeftViewIndex + 1 + i,
-								mAdapter.getItemId(mLeftViewIndex + 1 + i));
+						mOnItemSelected.onItemSelected(HorizontalListView.this, child, selectedIndex, mAdapter.getItemId(selectedIndex));
 					}
 					break;
 				}

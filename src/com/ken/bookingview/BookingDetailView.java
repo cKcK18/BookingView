@@ -69,8 +69,7 @@ public class BookingDetailView extends LinearLayout {
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				// not work
 				if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-					InputMethodManager in = (InputMethodManager) getContext().getSystemService(
-							Context.INPUT_METHOD_SERVICE);
+					InputMethodManager in = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 					in.hideSoftInputFromWindow(getWindowToken(), 0);
 					return true;
 				}
@@ -148,14 +147,12 @@ public class BookingDetailView extends LinearLayout {
 				final String phoneNumber = editPhoneNumber.getText().toString();
 				final boolean invalidPhoneNumber = phoneNumber == null || phoneNumber.equals("");
 				if (invalidPhoneNumber) {
-					Toast.makeText(BookingDetailView.this.getContext(), "invalide phone number", Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(BookingDetailView.this.getContext(), "invalide phone number", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				final boolean invalidServiceItem = mServiceItems.size() == 0;
 				if (invalidServiceItem) {
-					Toast.makeText(BookingDetailView.this.getContext(), "invalide service item", Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(BookingDetailView.this.getContext(), "invalide service item", Toast.LENGTH_SHORT).show();
 					return;
 				}
 
@@ -170,15 +167,15 @@ public class BookingDetailView extends LinearLayout {
 					final int hour = mBookingDate.get(Calendar.HOUR_OF_DAY);
 					final int minute = mBookingDate.get(Calendar.MINUTE);
 					// FIXME
-					final BookingData date = new BookingData(id, name, sex, year, month, day, hour, minute,
-							phoneNumber, mServiceItems, "");
+					final BookingData date = new BookingData(id, name, sex, year, month, day, hour, minute, phoneNumber, mServiceItems, "");
 					// notify database
 					BookingDataManager.getInstance().writeBookingData(date);
 
 					// notify UI
+					activity.backToBooking();
 					final boolean show = false;
 					final boolean animate = true;
-					show(show, animate);
+					activity.showDetailView(show, animate);
 					Toast.makeText(BookingDetailView.this.getContext(), "add completed", Toast.LENGTH_SHORT).show();
 
 					// clear all
@@ -204,7 +201,10 @@ public class BookingDetailView extends LinearLayout {
 			public void onClick(View v) {
 				final boolean show = false;
 				final boolean animate = true;
-				show(show, animate);
+				final StylishBookingActivity activity = getActivity();
+				if (activity != null) {
+					activity.showDetailView(show, animate);
+				}
 			}
 		});
 	}
@@ -240,33 +240,32 @@ public class BookingDetailView extends LinearLayout {
 		}
 	}
 
-	public void show(boolean show, boolean animate) {
-		if (show) {
-			final int duration = animate ? 300 : 0;
-			animate().translationY(0).setDuration(duration).setInterpolator(new DecelerateInterpolator())
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							setTranslationY(0);
-						}
-					}).start();
-		} else {
-			final int duration = animate ? 300 : 0;
-			final int tranY = getHeight();
-			animate().translationY(tranY).setDuration(duration).setInterpolator(new DecelerateInterpolator())
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							setTranslationY(tranY);
+	public void show(final boolean show, boolean animate) {
+		final float tranY = show ? 0 : getHeight();
+		final int duration = animate ? 300 : 0;
 
+		animate().translationY(tranY).setDuration(duration).setInterpolator(new DecelerateInterpolator())
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationStart(Animator animation) {
+						if (show) {
+							setVisibility(View.VISIBLE);
+						}
+					}
+
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						if (!show) {
+							setVisibility(View.GONE);
 							// back to activity
 							final StylishBookingActivity activity = getActivity();
 							if (activity != null) {
 								activity.backToBooking();
 							}
 						}
-					}).start();
-		}
+						setTranslationY(tranY);
+					}
+				}).start();
 	}
 
 	private class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
@@ -332,8 +331,7 @@ public class BookingDetailView extends LinearLayout {
 			int minute = date.get(Calendar.MINUTE);
 
 			// Create a new instance of TimePickerDialog and return it
-			TimePickerDialog timePicker = new TimePickerDialog(getActivity(), this, hour, minute,
-					DateFormat.is24HourFormat(getActivity()));
+			TimePickerDialog timePicker = new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 			timePicker.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					if (which == DialogInterface.BUTTON_NEGATIVE) {
@@ -363,8 +361,8 @@ public class BookingDetailView extends LinearLayout {
 
 				mBookingDate = Calendar.getInstance();
 				mBookingDate.set(year, month, day, hourOfDay, minute);
-				String string = String.format("%04d%s%2d%s%2d%s %02d:%02d", year, yearString, month, monthString, day,
-						dayString, hourOfDay, minute);
+				String string = String.format("%04d%s%2d%s%2d%s %02d:%02d", year, yearString, month, monthString, day, dayString,
+						hourOfDay, minute);
 				mDateText.setText(string);
 				positive = false;
 

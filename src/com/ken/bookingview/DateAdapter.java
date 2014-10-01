@@ -28,8 +28,7 @@ public class DateAdapter extends BaseAdapter {
 
 	public DateAdapter(Context context) {
 		mContext = context;
-		mCalendarViewWidth = context.getResources().getDisplayMetrics().widthPixels
-				/ HorizontalListView.VISIBLE_DATE_COUNT;
+		mCalendarViewWidth = context.getResources().getDisplayMetrics().widthPixels / HorizontalListView.VISIBLE_DATE_COUNT;
 	}
 
 	@Override
@@ -57,8 +56,7 @@ public class DateAdapter extends BaseAdapter {
 			convertView.setLayoutParams(lp);
 
 			holder = new ViewHolder();
-			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(mCalendarViewWidth,
-					LayoutParams.WRAP_CONTENT);
+			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(mCalendarViewWidth, LayoutParams.WRAP_CONTENT);
 			holder.dayOfWeekView = (TextView) convertView.findViewById(R.id.date_day_of_week);
 			holder.dayOfWeekView.setLayoutParams(llp);
 			holder.dayOfMonthView = (TextView) convertView.findViewById(R.id.date_day_of_month);
@@ -79,7 +77,7 @@ public class DateAdapter extends BaseAdapter {
 		holder.dayOfWeekView.setText(shortString);
 		holder.dayOfMonthView.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
 		// // for debug use
-		holder.dayOfWeekView.setText(String.valueOf(position % 1000));
+		// holder.dayOfWeekView.setText(String.valueOf(position % 1000));
 		// normally, we don't have to call the invalidate function because of horizontal list view bug.
 		convertView.invalidate();
 
