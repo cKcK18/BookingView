@@ -53,7 +53,7 @@ public class DateAdapter extends BaseAdapter {
 		ViewHolder holder;
 		if (convertView == null) {
 			final LayoutParams lp = new LayoutParams(mCalendarViewWidth, LayoutParams.WRAP_CONTENT);
-			convertView = LayoutInflater.from(mContext).inflate(R.layout.date_item_view, parent, false);
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_date_item_view, parent, false);
 			convertView.setLayoutParams(lp);
 
 			holder = new ViewHolder();

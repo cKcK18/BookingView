@@ -245,7 +245,7 @@ public class TimeSheetItemView extends View {
 
 			// draw NEW
 			canvas.drawPath(mFlagTextBackgroundPath, mFlagTextBackgroundPaint);
-			canvas.drawText(getResources().getString(R.string.booking_view_new), mFlagTextPoint.x, mFlagTextPoint.y,
+			canvas.drawText(getResources().getString(R.string.stylish_booking_view_new), mFlagTextPoint.x, mFlagTextPoint.y,
 					mFlagTextPaint);
 		}
 

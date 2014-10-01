@@ -160,7 +160,7 @@ public class BookingDetailView extends LinearLayout {
 				}
 
 				// save the booking and notify data and UI
-				final BookingActivity activity = getActivity();
+				final StylishBookingActivity activity = getActivity();
 				if (activity != null) {
 					final BookingApplication app = (BookingApplication) activity.getApplicationContext();
 					final long id = app.getBookingProvider().generateNewId();
@@ -209,15 +209,15 @@ public class BookingDetailView extends LinearLayout {
 		});
 	}
 
-	private BookingActivity getActivity() {
-		if (getContext() instanceof BookingActivity) {
-			return (BookingActivity) getContext();
+	private StylishBookingActivity getActivity() {
+		if (getContext() instanceof StylishBookingActivity) {
+			return (StylishBookingActivity) getContext();
 		}
 		return null;
 	}
 
 	private void popupDatePickerDialog() {
-		final BookingActivity activity = getActivity();
+		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
 			DialogFragment newFragment = new DatePickerFragment();
 			newFragment.show(activity.getSupportFragmentManager(), "datePicker");
@@ -225,7 +225,7 @@ public class BookingDetailView extends LinearLayout {
 	}
 
 	private void popupTimePickerDialog(Calendar calendar) {
-		final BookingActivity activity = getActivity();
+		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
 			DialogFragment newFragment = new TimePickerFragment(calendar);
 			newFragment.show(activity.getSupportFragmentManager(), "timePicker");
@@ -233,7 +233,7 @@ public class BookingDetailView extends LinearLayout {
 	}
 
 	private void popupServicePickerDialog() {
-		final BookingActivity activity = getActivity();
+		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
 			DialogFragment newFragment = new ServicePickerFragment();
 			newFragment.show(activity.getSupportFragmentManager(), "servicePicker");
@@ -260,7 +260,7 @@ public class BookingDetailView extends LinearLayout {
 							setTranslationY(tranY);
 
 							// back to activity
-							final BookingActivity activity = getActivity();
+							final StylishBookingActivity activity = getActivity();
 							if (activity != null) {
 								activity.backToBooking();
 							}

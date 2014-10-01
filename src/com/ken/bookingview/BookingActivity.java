@@ -5,70 +5,53 @@ import java.util.Calendar;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ken.bookingview.HorizontalListView.OnSelectedItemChangedListener;
 
-public class BookingActivity extends FragmentActivity implements OnSelectedItemChangedListener {
+abstract public class BookingActivity extends FragmentActivity implements OnSelectedItemChangedListener {
 
-	private static final int ACTION_TODAY = 0;
-	private static final int ACTION_LEFT_ARROW = 1;
-	private static final int ACTION_RIGHT_ARROW = 2;
-	private static final int ACTION_DATE = 3;
-	private static final int ACTION_PAGER = 4;
+	@SuppressWarnings("unused")
+	private static final String TAG = BookingActivity.class.getSimpleName();
 
-	private enum State {
-		BOOKING, DETAIL
-	};
+	protected static final int ACTION_TODAY = 0;
+	protected static final int ACTION_LEFT_ARROW = 1;
+	protected static final int ACTION_RIGHT_ARROW = 2;
+	protected static final int ACTION_DATE = 3;
+	protected static final int ACTION_PAGER = 4;
 
-	private TextView mMonthView;
-	private HorizontalListView mDateListView;
-	private ViewPager mPager;
-	private ImageButton mAddBookingDataButton;
-	private BookingDetailView mBookingDetailView;
-
-	private State mState = State.BOOKING;
+	protected TextView mMonthView;
+	protected HorizontalListView mDateListView;
+	protected ViewPager mPager;
 
 	private int mLastDateIndex = -100;
 	private boolean mDateListViewChanged = false;
 	private boolean mPagerChanged = false;
-
 	private boolean mLockButtonToChangeDate = false;
 
-	private final Handler mHandler = new Handler();
+	protected final Handler mHandler = new Handler();
+
+	abstract protected int getLayoutResource();
+	abstract protected FragmentStatePagerAdapter getPagerAdapter();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_booking);
+
+		final int layoutResource = getLayoutResource();
+		setContentView(layoutResource);
 		setUpView();
 	}
 
-	private void setUpView() {
-		ImageButton backButton = (ImageButton) findViewById(R.id.booking_back);
-		backButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-
-		Button toadyButton = (Button) findViewById(R.id.booking_today);
-		toadyButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				performDateToBeChanged(ACTION_TODAY);
-			}
-		});
-
-		ImageButton leftArrowButton = (ImageButton) findViewById(R.id.booking_left_arrow);
+	protected void setUpView() {
+		final ImageButton leftArrowButton = (ImageButton) findViewById(R.id.calendar_left_arrow);
 		leftArrowButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -76,10 +59,10 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 			}
 		});
 
-		mMonthView = (TextView) findViewById(R.id.booking_month);
+		mMonthView = (TextView) findViewById(R.id.calendar_month);
 		mMonthView.setText(getStringWithYearAndMonth(Calendar.getInstance()));
 
-		ImageButton rightArrowButton = (ImageButton) findViewById(R.id.booking_right_arrow);
+		final ImageButton rightArrowButton = (ImageButton) findViewById(R.id.calendar_right_arrow);
 		rightArrowButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -87,14 +70,13 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 			}
 		});
 
-		//
-		mDateListView = (HorizontalListView) findViewById(R.id.date_list_view);
+		mDateListView = (HorizontalListView) findViewById(R.id.calendar_date_listview);
 		mDateListView.setAdapter(new DateAdapter(this));
 		mDateListView.setOnScrollChangedListener(this);
 
 		// Instantiate a ViewPager and a PagerAdapter.
-		mPager = (ViewPager) findViewById(R.id.timesheet_pager);
-		mPager.setAdapter(new TimeSheetPagerAdapter(getSupportFragmentManager()));
+		mPager = (ViewPager) findViewById(R.id.calendar_timesheet_pager);
+		mPager.setAdapter(getPagerAdapter());
 		mPager.setOnPageChangeListener(new SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int dateIndex) {
@@ -105,28 +87,9 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 				changeDate(ACTION_PAGER, dateIndex);
 			}
 		});
-
-		//
-		mAddBookingDataButton = (ImageButton) findViewById(R.id.add_booking_data_btn);
-		mAddBookingDataButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// final int tranY = getResources().getDisplayMetrics().heightPixels;
-				mState = State.DETAIL;
-				final boolean show = true;
-				final boolean animate = true;
-				mBookingDetailView.show(show, animate);
-			}
-		});
-
-		//
-		final int tranY = getResources().getDisplayMetrics().heightPixels;
-
-		mBookingDetailView = (BookingDetailView) findViewById(R.id.booking_detail_view);
-		mBookingDetailView.setTranslationY(tranY);
 	}
 
-	private void performDateToBeChanged(int action) {
+	protected final void performDateToBeChanged(int action) {
 		if (mLockButtonToChangeDate) {
 			return;
 		}
@@ -141,8 +104,8 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 	}
 
 	private String getStringWithYearAndMonth(Calendar calendar) {
-		return String.format("%d%s %d", calendar.get(Calendar.MONTH) + 1,
-				getResources().getString(R.string.booking_view_date), calendar.get(Calendar.YEAR));
+		return String.format("%d%s %d", calendar.get(Calendar.MONTH) + 1, getResources().getString(R.string.booking_view_date),
+				calendar.get(Calendar.YEAR));
 	}
 
 	@Override
@@ -161,21 +124,6 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 		super.onResume();
 	}
 
-	public void backToBooking() {
-		mState = State.BOOKING;
-	}
-
-	@Override
-	public void onBackPressed() {
-		if (mState == State.DETAIL) {
-			final boolean show = false;
-			final boolean animate = true;
-			mBookingDetailView.show(show, animate);
-		} else {
-			super.onBackPressed();
-		}
-	}
-
 	@Override
 	public void onSelectedItemChanged(int dateIndex) {
 		if (mPagerChanged) {
@@ -185,9 +133,9 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 		changeDate(ACTION_DATE, dateIndex);
 	}
 
-	private void changeDate(int action, int dateIndex) {
-		Log.d("kenchen", String.format("[changeDate] action: %d, date: %b, pager: %b, index: %d/%d", action,
-				mDateListViewChanged, mPagerChanged, mLastDateIndex, dateIndex));
+	protected final void changeDate(int action, int dateIndex) {
+		Log.d("kenchen", String.format("[changeDate] action: %d, date: %b, pager: %b, index: %d/%d", action, mDateListViewChanged,
+				mPagerChanged, mLastDateIndex, dateIndex));
 		if (mDateListViewChanged && mPagerChanged && mLastDateIndex == dateIndex) {
 			return;
 		}
@@ -210,8 +158,8 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 		case ACTION_LEFT_ARROW: {
 			calendar = DateUtilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(-1);
 			Log.d("kenchen",
-					String.format("[LEFT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
-							calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
+					String.format("[LEFT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+							calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
 			Log.d("kenchen", String.format("[LEFT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
@@ -225,9 +173,8 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 		}
 		case ACTION_RIGHT_ARROW: {
 			calendar = DateUtilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(1);
-			Log.d("kenchen",
-					String.format("[RIGHT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
-							calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
+			Log.d("kenchen", String.format("[RIGHT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
+					calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
 			Log.d("kenchen", String.format("[RIGHT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
@@ -268,8 +215,7 @@ public class BookingActivity extends FragmentActivity implements OnSelectedItemC
 		mLastDateIndex = -100;
 		final Calendar debug = calendar;
 		Log.d("kenchen",
-				String.format("picked date: %04d/%02d/%02d", debug.get(Calendar.YEAR), debug.get(Calendar.MONTH),
-						debug.get(Calendar.DATE)));
+				String.format("picked date: %04d/%02d/%02d", debug.get(Calendar.YEAR), debug.get(Calendar.MONTH), debug.get(Calendar.DATE)));
 		DateUtilities.sPickedDate = calendar;
 	}
 }
