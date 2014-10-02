@@ -59,7 +59,7 @@
         android:layout_height="60dp"
         android:background="#6063a8" />
 
-    <com.ken.bookingview.TimeSheetViewPager
+    <com.ken.bookingview.TimesheetViewPager
         android:id="@+id/calendar_timesheet_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

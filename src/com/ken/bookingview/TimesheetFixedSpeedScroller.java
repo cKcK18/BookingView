@@ -4,19 +4,19 @@ import android.content.Context;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
-public class TimeSheetFixedSpeedScroller extends Scroller {
+public class TimesheetFixedSpeedScroller extends Scroller {
 
 	private int mDuration;
 
-	public TimeSheetFixedSpeedScroller(Context context) {
+	public TimesheetFixedSpeedScroller(Context context) {
 		this(context, null);
 	}
 
-	public TimeSheetFixedSpeedScroller(Context context, Interpolator interpolator) {
+	public TimesheetFixedSpeedScroller(Context context, Interpolator interpolator) {
 		this(context, interpolator, false);
 	}
 
-	public TimeSheetFixedSpeedScroller(Context context, Interpolator interpolator, boolean flywheel) {
+	public TimesheetFixedSpeedScroller(Context context, Interpolator interpolator, boolean flywheel) {
 		super(context, interpolator, flywheel);
 	}
 

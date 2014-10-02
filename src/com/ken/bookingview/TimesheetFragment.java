@@ -33,10 +33,10 @@ import android.widget.ListView;
  * This class is used by the {@link CardFlipActivity} and {@link ScreenSlideActivity} samples.
  * </p>
  */
-public class TimeSheetFragment extends Fragment {
+public class TimesheetFragment extends Fragment {
 
 	@SuppressWarnings("unused")
-	private static final String TAG = TimeSheetFragment.class.getSimpleName();
+	private static final String TAG = TimesheetFragment.class.getSimpleName();
 	/**
 	 * The argument key for the page number this fragment represents.
 	 */
@@ -47,22 +47,22 @@ public class TimeSheetFragment extends Fragment {
 	 */
 	private int mPageNumber;
 
-	private TimeSheetAdapter mAdapter;
+	private TimesheetAdapter mAdapter;
 
 	private Calendar mCalendar;
 
 	/**
 	 * Factory method for this fragment class. Constructs a new fragment for the given page number.
 	 */
-	public static TimeSheetFragment create(int pageNumber) {
-		TimeSheetFragment fragment = new TimeSheetFragment();
+	public static TimesheetFragment create(int pageNumber) {
+		TimesheetFragment fragment = new TimesheetFragment();
 		Bundle args = new Bundle();
 		args.putInt(ARG_PAGE, pageNumber);
 		fragment.setArguments(args);
 		return fragment;
 	}
 
-	public TimeSheetFragment() {
+	public TimesheetFragment() {
 	}
 
 	@Override
@@ -71,9 +71,21 @@ public class TimeSheetFragment extends Fragment {
 
 		mPageNumber = getArguments().getInt(ARG_PAGE);
 		mCalendar = DateUtilities.getCalendarByIndex(mPageNumber);
-		mAdapter = new TimeSheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
-				mCalendar.get(Calendar.DATE));
+		mAdapter = recognizeAdapter();
 		BookingDataManager.getInstance().setOnDataChangedListener(mAdapter);
+	}
+
+	private TimesheetAdapter recognizeAdapter() {
+		final BookingActivity activity = (BookingActivity) getActivity();
+		final Class<? extends TimesheetAdapter> className = activity.getTimesheetAdapterClass();
+
+		if (StylishTimesheetAdapter.class.isAssignableFrom(className)) {
+			return new StylishTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
+					mCalendar.get(Calendar.DATE), 24);
+		} else {
+			return new CustomerTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
+					mCalendar.get(Calendar.DATE), 48);
+		}
 	}
 
 	@Override

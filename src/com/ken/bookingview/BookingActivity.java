@@ -5,7 +5,6 @@ import java.util.Calendar;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.util.Log;
@@ -39,7 +38,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	protected final Handler mHandler = new Handler();
 
 	abstract protected int getLayoutResource();
-	abstract protected FragmentStatePagerAdapter getPagerAdapter();
+	abstract protected Class<? extends TimesheetAdapter> getTimesheetAdapterClass();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 
 		// Instantiate a ViewPager and a PagerAdapter.
 		mPager = (ViewPager) findViewById(R.id.calendar_timesheet_pager);
-		mPager.setAdapter(getPagerAdapter());
+		mPager.setAdapter(new TimesheetPagerAdapter(getSupportFragmentManager()));
 		mPager.setOnPageChangeListener(new SimpleOnPageChangeListener() {
 			@Override
 			public void onPageSelected(int dateIndex) {

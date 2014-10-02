@@ -2,7 +2,6 @@ package com.ken.bookingview;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -22,8 +21,8 @@ public class CustomerBookingActivity extends BookingActivity {
 	}
 
 	@Override
-	protected FragmentStatePagerAdapter getPagerAdapter() {
-		return new TimeSheetPagerAdapter(getSupportFragmentManager());
+	protected Class<? extends TimesheetAdapter> getTimesheetAdapterClass() {
+		return CustomerTimesheetAdapter.class;
 	}
 
 	@Override

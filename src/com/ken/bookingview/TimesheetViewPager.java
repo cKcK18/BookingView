@@ -7,13 +7,13 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.animation.DecelerateInterpolator;
 
-public class TimeSheetViewPager extends ViewPager {
+public class TimesheetViewPager extends ViewPager {
 	
-	public TimeSheetViewPager(Context context) {
+	public TimesheetViewPager(Context context) {
 		this(context, null);
 	}
 
-	public TimeSheetViewPager(Context context, AttributeSet attrs) {
+	public TimesheetViewPager(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
 		setDuration(300);
@@ -24,7 +24,7 @@ public class TimeSheetViewPager extends ViewPager {
 			Field fieldScroller;
 			fieldScroller = ViewPager.class.getDeclaredField("mScroller");
 			fieldScroller.setAccessible(true);
-			TimeSheetFixedSpeedScroller scroller = new TimeSheetFixedSpeedScroller(getContext(),
+			TimesheetFixedSpeedScroller scroller = new TimesheetFixedSpeedScroller(getContext(),
 					new DecelerateInterpolator(2.0f));
 			scroller.setFixedDuration(duration);
 			fieldScroller.set(this, scroller);

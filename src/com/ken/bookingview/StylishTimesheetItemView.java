@@ -15,10 +15,10 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class TimeSheetItemView extends View {
+public class StylishTimesheetItemView extends View {
 
 	@SuppressWarnings("unused")
-	private static final String TAG = TimeSheetItemView.class.getSimpleName();
+	private static final String TAG = StylishTimesheetItemView.class.getSimpleName();
 
 	private static final int MAX_SERVICE_ITEM = 3;
 
@@ -55,15 +55,15 @@ public class TimeSheetItemView extends View {
 	private int mFlagTextBottom;
 	private int mFlagTextCenter;
 
-	public TimeSheetItemView(Context context) {
+	public StylishTimesheetItemView(Context context) {
 		this(context, null);
 	}
 
-	public TimeSheetItemView(Context context, AttributeSet attrs) {
+	public StylishTimesheetItemView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
 	}
 
-	public TimeSheetItemView(Context context, AttributeSet attrs, int defStyleAttr) {
+	public StylishTimesheetItemView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
 		setUpView(context);
 	}

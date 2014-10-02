@@ -5,17 +5,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
- * A simple pager adapter that represents 5 {@link TimeSheetFragment} objects, in sequence.
+ * A simple pager adapter that represents 5 {@link TimesheetFragment} objects, in sequence.
  */
-public class TimeSheetPagerAdapter extends FragmentStatePagerAdapter {
+public class TimesheetPagerAdapter extends FragmentStatePagerAdapter {
 
-	public TimeSheetPagerAdapter(FragmentManager fragmentManager) {
+	public TimesheetPagerAdapter(FragmentManager fragmentManager) {
 		super(fragmentManager);
 	}
 
 	@Override
 	public Fragment getItem(int pos) {
-		return TimeSheetFragment.create(pos);
+		return TimesheetFragment.create(pos);
 	}
 
 	@Override
