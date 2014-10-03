@@ -115,7 +115,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 			public void run() {
 				changeDate(ACTION_TODAY, -1);
 			}
-		}, 100);
+		}, 1000);
 	}
 
 	@Override

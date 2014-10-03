@@ -9,8 +9,8 @@
     <!-- for customer booking view -->
     <string name="customer_booking_view_title">線上預約表</string>
     <string name="customer_booking_view_available">可電話預約</string>
-    <string name="customer_booking_view_be_occupied">已滿</string>
-    <string name="customer_booking_view_success">預約成功</string>
+    <string name="customer_booking_view_full">已滿</string>
+    <string name="customer_booking_view_ok">預約成功</string>
     <string name="customer_booking_view_call">電話預約</string>
 
     <!-- for stylish booking view -->

@@ -16,21 +16,16 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// find time sheet item first
-		BookingData timeSheetItem = null;
-		for (BookingData item : mBookingList) {
-			if (position == item.hourOfDay) {
-				timeSheetItem = item;
-				break;
-			}
-		}
+		final BookingRecord record = getAvailableRecord(position);
+
 		// reuse or create view
 		if (convertView == null) {
 			convertView = new StylishTimesheetItemView(mContext);
-			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mTimeSheetItemViewHeight));
+			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mBookingItemHeight));
+			convertView.setTag(R.id.booking_item_count, mMaxSize);
 		}
-		convertView.setTag(R.id.time_sheet_item_identity, position);
-		convertView.setTag(R.id.time_sheet_item_info, timeSheetItem);
+		convertView.setTag(R.id.booking_item_identity, position);
+		convertView.setTag(R.id.booking_item_info, record);
 
 		return convertView;
 	}
@@ -47,7 +42,7 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 	public void onDataChanged() {
 		super.onDataChanged();
 
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
 		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
 		notifyDataSetInvalidated();
 	}

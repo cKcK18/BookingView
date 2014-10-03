@@ -11,7 +11,7 @@ public class BookingApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		BookingDataManager.init(this);
+		BookingRecordManager.init(this);
 	}
 
 	void setBookingProvider(BookingProvider provider) {

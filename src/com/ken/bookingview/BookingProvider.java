@@ -54,8 +54,9 @@ public class BookingProvider extends ContentProvider {
 	static final String COLUMN_HOUR_OF_DAY = "hourOfDay";
 	static final String COLUMN_MINUTE = "minute";
 	static final String COLUMN_PHONE_NUMBER = "phoneNumber";
-	static final String COLUMN_SERVICE_ITEMS = "serviceItems";
-	static final String COLUMN_REQUIRED_TIME = "requiredTime";
+	static final String COLUMN_SERVICE_TYPE = "serviceType";
+	static final String COLUMN_REQUIRED_HOUR = "requiredHour";
+	static final String COLUMN_REQUIRED_MINUTE = "requiredMinute";
 	
 	private long mLastID = -1;
 
@@ -238,8 +239,9 @@ public class BookingProvider extends ContentProvider {
                     COLUMN_HOUR_OF_DAY + " INTEGER NOT NULL," +
                     COLUMN_MINUTE + " INTEGER NOT NULL," +
                     COLUMN_PHONE_NUMBER + " TEXT NOT NULL," +
-                    COLUMN_SERVICE_ITEMS + " TEXT NOT NULL," +
-                    COLUMN_REQUIRED_TIME + " TEXT NOT NULL" +
+                    COLUMN_SERVICE_TYPE + " TEXT NOT NULL," +
+                    COLUMN_REQUIRED_HOUR + " INTEGER NOT NULL," +
+                    COLUMN_REQUIRED_MINUTE + " INTEGER NOT NULL" +
                     ");");
 		}
 

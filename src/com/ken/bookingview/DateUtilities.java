@@ -2,6 +2,8 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
+import android.util.Log;
+
 public class DateUtilities {
 
 	/*
@@ -18,7 +20,12 @@ public class DateUtilities {
 	private static final int END_MONTH = Calendar.DECEMBER;
 	private static final int END_DATE = 31;
 
-	private static final long A_DAY_IN_MILLISECOND = 60 * 60 * 24 * 1000;
+	protected static final int A_MINUTE_IN_SECOND = 60;
+	protected static final int A_HOUR_IN_MINUTE = 60;
+	protected static final int A_DAY_IN_HOUR = 24;
+	protected static final int A_DAY_IN_MINUTE = A_HOUR_IN_MINUTE * A_DAY_IN_HOUR;
+	protected static final int A_DAY_IN_SECOND = A_MINUTE_IN_SECOND * A_DAY_IN_MINUTE;
+	protected static final long A_DAY_IN_MILLISECOND = A_DAY_IN_SECOND * 1000;
 
 	private static final Calendar sStartDate = Calendar.getInstance();
 	private static final Calendar sEndDate = Calendar.getInstance();
@@ -48,8 +55,7 @@ public class DateUtilities {
 	}
 
 	/*
-	 * only retrieve the year, month and date by specific calendar you pass, don't care about the hour, minute and
-	 * second.
+	 * only retrieve the year, month and date by specific calendar you pass, don't care about the hour, minute and second.
 	 */
 	public static Calendar getInstance(Calendar source) {
 		final Calendar calendar = Calendar.getInstance();
@@ -132,5 +138,11 @@ public class DateUtilities {
 		Calendar calendar = getCalendarByIndex(dateIndex);
 		final int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 		return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
+	}
+
+	public static synchronized boolean within(Calendar start, Calendar end, Calendar target) {
+		Log.d("kenchen", String.format("[within] start: %s\nend: %s\n, target: %s", start, end, target));
+		Log.d("kenchen", String.format("[within] within: %b", start.before(target) && end.after(target)));
+		return start.before(target) && end.after(target);
 	}
 }

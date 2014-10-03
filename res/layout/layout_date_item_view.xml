@@ -18,7 +18,7 @@
     </TextView>
 
     <TextView
-        android:id="@+id/date_day_of_month"
+        android:id="@+id/customer_booking_item_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"

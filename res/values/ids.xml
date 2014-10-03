@@ -2,8 +2,9 @@
 <resources>
 
     <!-- for time sheet item to put into the bundle -->
-    <item name="time_sheet_item_identity" type="id"/>
-    <item name="time_sheet_item_info" type="id"/>
+    <item name="booking_item_identity" type="id"/>
+    <item name="booking_item_count" type="id"/>
+    <item name="booking_item_info" type="id"/>
 
     <!-- for date item to put into the bundle -->
     <item name="date_item_holder" type="id"/>

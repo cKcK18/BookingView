@@ -13,9 +13,9 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.view.View;
+import android.widget.LinearLayout;
 
-public class StylishTimesheetItemView extends View {
+public class StylishTimesheetItemView extends LinearLayout {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = StylishTimesheetItemView.class.getSimpleName();
@@ -74,20 +74,19 @@ public class StylishTimesheetItemView extends View {
 	}
 
 	private void setUpDimension(Resources resources) {
-		mIdentityWidth = resources.getDimensionPixelSize(R.dimen.identity_width);
-		mDivisionWidth = resources.getDimensionPixelSize(R.dimen.division_width);
-		mGapBetweenDivisionAndContent = resources.getDimensionPixelSize(R.dimen.gap_between_division_and_content);
-		mServiceItemWidth = resources.getDimensionPixelSize(R.dimen.service_item_width);
-		mServiceItemHeight = resources.getDimensionPixelSize(R.dimen.service_item_height);
-		mGapBetweenServiceItem = resources.getDimensionPixelSize(R.dimen.gap_between_service_item);
-		mGapBetweenServiceItemAndContent = resources
-				.getDimensionPixelSize(R.dimen.gap_between_service_item_and_content);
+		mIdentityWidth = resources.getDimensionPixelSize(R.dimen.booking_item_identity_width);
+		mDivisionWidth = resources.getDimensionPixelSize(R.dimen.booking_item_division_width);
+		mGapBetweenDivisionAndContent = resources.getDimensionPixelSize(R.dimen.booking_item_gap_between_division_and_content);
+		mServiceItemWidth = resources.getDimensionPixelSize(R.dimen.booking_item_service_type_width);
+		mServiceItemHeight = resources.getDimensionPixelSize(R.dimen.booking_item_service_type_height);
+		mGapBetweenServiceItem = resources.getDimensionPixelSize(R.dimen.booking_item_gap_between_service_type);
+		mGapBetweenServiceItemAndContent = resources.getDimensionPixelSize(R.dimen.booking_item_gap_between_service_type_and_content);
 
-		mFlagTextLeft = resources.getDimensionPixelSize(R.dimen.flag_text_left);
-		mFlagTextRight = resources.getDimensionPixelSize(R.dimen.flag_text_right);
-		mFlagTextTop = resources.getDimensionPixelSize(R.dimen.flag_text_top);
-		mFlagTextBottom = resources.getDimensionPixelSize(R.dimen.flag_text_bottom);
-		mFlagTextCenter = resources.getDimensionPixelSize(R.dimen.flag_text_center);
+		mFlagTextLeft = resources.getDimensionPixelSize(R.dimen.booking_item_flag_text_left);
+		mFlagTextRight = resources.getDimensionPixelSize(R.dimen.booking_item_flag_text_right);
+		mFlagTextTop = resources.getDimensionPixelSize(R.dimen.booking_item_flag_text_top);
+		mFlagTextBottom = resources.getDimensionPixelSize(R.dimen.booking_item_flag_text_bottom);
+		mFlagTextCenter = resources.getDimensionPixelSize(R.dimen.booking_item_flag_text_center);
 	}
 
 	private void setUpPaint() {
@@ -160,13 +159,11 @@ public class StylishTimesheetItemView extends View {
 		}
 		int serviceItemLeft = paddingLeftForContent;
 		for (int i = 0; i < MAX_SERVICE_ITEM; ++i) {
-			final Rect rect = new Rect(serviceItemLeft, mServiceItemHeight, serviceItemLeft + mServiceItemWidth,
-					mServiceItemHeight * 2);
+			final Rect rect = new Rect(serviceItemLeft, mServiceItemHeight, serviceItemLeft + mServiceItemWidth, mServiceItemHeight * 2);
 			mServiceListBackgroundRect.add(rect);
 
 			final Point point = new Point();
-			estimatePositionInCenter(point, rect.left, rect.top, mServiceItemWidth, mServiceItemHeight,
-					mServiceItemsPaint);
+			estimatePositionInCenter(point, rect.left, rect.top, mServiceItemWidth, mServiceItemHeight, mServiceItemsPaint);
 			mServiceListPoint.add(point);
 
 			serviceItemLeft += mServiceItemWidth + mGapBetweenServiceItem;
@@ -176,8 +173,8 @@ public class StylishTimesheetItemView extends View {
 		if (mContentPoint == null) {
 			mContentPoint = new Point();
 		}
-		estimatePositionInCenter(mContentPoint, mDivisionRect.right + mGapBetweenDivisionAndContent, mServiceItemHeight
-				* 2 + mGapBetweenServiceItemAndContent, 0, mServiceItemHeight, mContentPaint);
+		estimatePositionInCenter(mContentPoint, mDivisionRect.right + mGapBetweenDivisionAndContent, mServiceItemHeight * 2
+				+ mGapBetweenServiceItemAndContent, 0, mServiceItemHeight, mContentPaint);
 
 		// prepare the NEW tag
 		if (mFlagTextBackgroundPath == null) {
@@ -194,8 +191,8 @@ public class StylishTimesheetItemView extends View {
 		if (mFlagTextPoint == null) {
 			mFlagTextPoint = new Point();
 		}
-		estimatePositionInCenter(mFlagTextPoint, mFlagTextLeft, mFlagTextTop, mFlagTextRight - mFlagTextLeft,
-				mFlagTextCenter - mFlagTextTop, mFlagTextPaint);
+		estimatePositionInCenter(mFlagTextPoint, mFlagTextLeft, mFlagTextTop, mFlagTextRight - mFlagTextLeft, mFlagTextCenter
+				- mFlagTextTop, mFlagTextPaint);
 	}
 
 	/*
@@ -209,23 +206,28 @@ public class StylishTimesheetItemView extends View {
 		return point;
 	}
 
-	private String identityToTime(int identity) {
-		// just like the identity is 9, it will transform into _9:00
-		return String.format("%2d:00", identity);
+	private String identityToTime(int identity, int count) {
+		if (count % 24 != 0) {
+			throw new IllegalStateException();
+		}
+		final int unitTime = 24 * 60 / count;
+		final int time = identity * unitTime;
+		return String.format("%2d:%02d", time / 60, time % 60);
 	}
 
 	@Override
 	protected void onDraw(Canvas canvas) {
-		final Integer identity = (Integer) getTag(R.id.time_sheet_item_identity);
-		final BookingData data = (BookingData) getTag(R.id.time_sheet_item_info);
+		final Integer identity = (Integer) getTag(R.id.booking_item_identity);
+		final Integer count = (Integer) getTag(R.id.booking_item_count);
+		final BookingRecord data = (BookingRecord) getTag(R.id.booking_item_info);
 
-		canvas.drawText(identityToTime(identity), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
+		canvas.drawText(identityToTime(identity, count), mIdentityPoint.x, mIdentityPoint.y, mIdentityPaint);
 		canvas.drawRect(mDivisionRect, mDivisionPaint);
 
 		// check any booking by booking name
 		final boolean hasBooking = data != null;
 		if (hasBooking) {
-			final ArrayList<String> serviceList = data.serviceItems;
+			final ArrayList<String> serviceList = data.serviceType;
 			final int serviceItemCount = serviceList != null ? serviceList.size() : 0;
 			// draw each service item
 			for (int i = 0; i < serviceItemCount; ++i) {
@@ -239,14 +241,12 @@ public class StylishTimesheetItemView extends View {
 			}
 
 			// draw contents
-			final String content = String.format("%02d:%02d  %s  %s", data.hourOfDay, data.minute, data.name,
-					data.phoneNumber);
+			final String content = String.format("%02d:%02d  %s  %s", data.hourOfDay, data.minute, data.name, data.phoneNumber);
 			canvas.drawText(content, mContentPoint.x, mContentPoint.y, mContentPaint);
 
 			// draw NEW
 			canvas.drawPath(mFlagTextBackgroundPath, mFlagTextBackgroundPaint);
-			canvas.drawText(getResources().getString(R.string.stylish_booking_view_new), mFlagTextPoint.x, mFlagTextPoint.y,
-					mFlagTextPaint);
+			canvas.drawText(getResources().getString(R.string.stylish_booking_view_new), mFlagTextPoint.x, mFlagTextPoint.y, mFlagTextPaint);
 		}
 
 		// draw end line

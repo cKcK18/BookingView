@@ -59,7 +59,7 @@ public class DateAdapter extends BaseAdapter {
 			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(mCalendarViewWidth, LayoutParams.WRAP_CONTENT);
 			holder.dayOfWeekView = (TextView) convertView.findViewById(R.id.date_day_of_week);
 			holder.dayOfWeekView.setLayoutParams(llp);
-			holder.dayOfMonthView = (TextView) convertView.findViewById(R.id.date_day_of_month);
+			holder.dayOfMonthView = (TextView) convertView.findViewById(R.id.customer_booking_item_status);
 			holder.dayOfMonthView.setLayoutParams(llp);
 
 			convertView.setTag(R.id.date_item_holder, holder);

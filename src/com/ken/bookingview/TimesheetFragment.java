@@ -72,7 +72,7 @@ public class TimesheetFragment extends Fragment {
 		mPageNumber = getArguments().getInt(ARG_PAGE);
 		mCalendar = DateUtilities.getCalendarByIndex(mPageNumber);
 		mAdapter = recognizeAdapter();
-		BookingDataManager.getInstance().setOnDataChangedListener(mAdapter);
+		BookingRecordManager.getInstance().setOnDataChangedListener(mAdapter);
 	}
 
 	private TimesheetAdapter recognizeAdapter() {
@@ -102,7 +102,7 @@ public class TimesheetFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		BookingDataManager.getInstance().removeOnDataChangedListener(mAdapter);
+		BookingRecordManager.getInstance().removeOnDataChangedListener(mAdapter);
 	}
 
 	public Calendar getCalendar() {

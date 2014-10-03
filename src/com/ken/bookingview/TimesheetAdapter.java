@@ -1,11 +1,12 @@
 package com.ken.bookingview;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import android.content.Context;
 import android.widget.BaseAdapter;
 
-import com.ken.bookingview.BookingDataManager.OnDateChangedListener;
+import com.ken.bookingview.BookingRecordManager.OnDateChangedListener;
 
 public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChangedListener {
 
@@ -17,9 +18,9 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 	protected final int mMonth;
 	protected final int mDay;
 	protected final int mMaxSize;
-	protected ArrayList<BookingData> mBookingList;
+	protected ArrayList<BookingRecord> mBookingList;
 
-	protected int mTimeSheetItemViewHeight = -1;
+	protected int mBookingItemHeight = -1;
 
 	public TimesheetAdapter(Context context, int year, int month, int day, int maxSize) {
 		mContext = context;
@@ -28,10 +29,10 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 		mDay = day;
 		mMaxSize = maxSize;
 
-		final BookingDataManager manager = BookingDataManager.getInstance();
+		final BookingRecordManager manager = BookingRecordManager.getInstance();
 		mBookingList = manager.getBookingListByDate(year, month, day);
 
-		mTimeSheetItemViewHeight = context.getResources().getDimensionPixelSize(R.dimen.time_sheet_item_view_height);
+		mBookingItemHeight = context.getResources().getDimensionPixelSize(R.dimen.booking_item_height);
 	}
 
 	@Override
@@ -51,11 +52,40 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 
 	@Override
 	public void onDataReady() {
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
 	}
 
 	@Override
 	public void onDataChanged() {
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+	}
+
+	protected final BookingRecord getAvailableRecord(int position) {
+		// transform position into specific time
+		final int unitMinutes = DateUtilities.A_DAY_IN_MINUTE / mMaxSize;
+		final int time = position * unitMinutes;
+		final int hour = time / DateUtilities.A_HOUR_IN_MINUTE;
+		final int minute = time % DateUtilities.A_HOUR_IN_MINUTE;
+
+		// find record first
+		BookingRecord timeSheetItem = null;
+		for (BookingRecord record : mBookingList) {
+			Calendar start = Calendar.getInstance();
+			start.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
+
+			Calendar end = Calendar.getInstance();
+			end.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
+			end.add(Calendar.HOUR_OF_DAY, record.requiredHour);
+			end.add(Calendar.MINUTE, record.requiredMinute);
+
+			Calendar target = Calendar.getInstance();
+			target.set(mYear, mMonth, mDay, hour, minute, 0);
+
+			if (DateUtilities.within(start, end, target)) {
+				timeSheetItem = record;
+				break;
+			}
+		}
+		return timeSheetItem;
 	}
 }

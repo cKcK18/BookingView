@@ -1,12 +1,13 @@
 package com.ken.bookingview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
-
-import com.ken.bookingview.BookingDataManager.OnDateChangedListener;
+import com.ken.bookingview.BookingRecordManager.OnDateChangedListener;
 
 public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnDateChangedListener {
 
@@ -16,23 +17,19 @@ public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnDate
 		super(context, year, month, day, maxSize);
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// find time sheet item first
-		BookingData timeSheetItem = null;
-		for (BookingData item : mBookingList) {
-			if (position == item.hourOfDay) {
-				timeSheetItem = item;
-				break;
-			}
-		}
+		final BookingRecord record = getAvailableRecord(position);
+
 		// reuse or create view
 		if (convertView == null) {
-			convertView = new StylishTimesheetItemView(mContext);
-			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mTimeSheetItemViewHeight));
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_customer_booking_item_view, null, false);
+			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mBookingItemHeight));
+			convertView.setTag(R.id.booking_item_count, mMaxSize);
 		}
-		convertView.setTag(R.id.time_sheet_item_identity, position);
-		convertView.setTag(R.id.time_sheet_item_info, timeSheetItem);
+		convertView.setTag(R.id.booking_item_identity, position);
+		convertView.setTag(R.id.booking_item_info, record);
 
 		return convertView;
 	}
@@ -49,7 +46,7 @@ public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnDate
 	public void onDataChanged() {
 		super.onDataChanged();
 
-		mBookingList = BookingDataManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
 		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
 		notifyDataSetInvalidated();
 	}

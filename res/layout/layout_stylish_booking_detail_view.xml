@@ -9,7 +9,7 @@
     android:paddingRight="30dp" >
 
     <TextView
-        android:id="@+id/booking_detail_title"
+        android:id="@+id/stylish_booking_detail_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -34,11 +34,11 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/booking_detail_edit_name"
+            android:id="@+id/stylish_booking_detail_edit_name"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/booking_detail_sex_spinner"
+            android:layout_toLeftOf="@+id/stylish_booking_detail_sex_spinner"
             android:background="@null"
             android:gravity="right"
             android:inputType="text"
@@ -48,7 +48,7 @@
             android:textSize="18sp" />
 
         <Spinner
-            android:id="@+id/booking_detail_sex_spinner"
+            android:id="@+id/stylish_booking_detail_sex_spinner"
             android:layout_width="85dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -76,18 +76,18 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/booking_detail_date"
+            android:id="@+id/stylish_booking_detail_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/booking_detail_date_arrow"
+            android:layout_toLeftOf="@+id/stylish_booking_detail_date_arrow"
             android:gravity="right"
             android:lines="1"
             android:textColor="#2DB2C1"
             android:textSize="18sp" />
 
         <ImageButton
-            android:id="@+id/booking_detail_date_arrow"
+            android:id="@+id/stylish_booking_detail_date_arrow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -116,7 +116,7 @@
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/booking_detail_edit_phone_number"
+            android:id="@+id/stylish_booking_detail_edit_phone_number"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -149,18 +149,18 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/booking_detail_service_item"
+            android:id="@+id/stylish_booking_detail_service_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/booking_detail_service_item_arrow"
+            android:layout_toLeftOf="@+id/stylish_booking_detail_service_item_arrow"
             android:gravity="right"
             android:lines="1"
             android:textColor="#2DB2C1"
             android:textSize="18sp" />
 
         <ImageButton
-            android:id="@+id/booking_detail_service_item_arrow"
+            android:id="@+id/stylish_booking_detail_service_item_arrow"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
@@ -176,7 +176,7 @@
         android:background="#CCCCCC" />
 
     <TextView
-        android:id="@+id/booking_detail_required_time"
+        android:id="@+id/stylish_booking_detail_required_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
@@ -187,7 +187,7 @@
         android:textSize="16sp" />
 
     <Button
-        android:id="@+id/booking_detail_confirm"
+        android:id="@+id/stylish_booking_detail_confirm"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_gravity="center"
@@ -198,7 +198,7 @@
         android:textSize="17sp" />
 
     <Button
-        android:id="@+id/booking_detail_cancel"
+        android:id="@+id/stylish_booking_detail_cancel"
         android:layout_width="match_parent"
         android:layout_height="54dp"
         android:layout_gravity="center"

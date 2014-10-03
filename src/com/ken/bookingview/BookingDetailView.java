@@ -63,7 +63,7 @@ public class BookingDetailView extends LinearLayout {
 
 	@Override
 	protected void onFinishInflate() {
-		final EditText nameText = (EditText) findViewById(R.id.booking_detail_edit_name);
+		final EditText nameText = (EditText) findViewById(R.id.stylish_booking_detail_edit_name);
 		nameText.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -77,13 +77,13 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final Spinner sexSpinner = (Spinner) findViewById(R.id.booking_detail_sex_spinner);
+		final Spinner sexSpinner = (Spinner) findViewById(R.id.stylish_booking_detail_sex_spinner);
 		final String[] sexList = getResources().getStringArray(R.array.sex_array);
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.layout_spinner_item, sexList);
 		dataAdapter.setDropDownViewResource(R.layout.layout_spinner_dropdown_item);
 		sexSpinner.setAdapter(dataAdapter);
 
-		mDateText = (TextView) findViewById(R.id.booking_detail_date);
+		mDateText = (TextView) findViewById(R.id.stylish_booking_detail_date);
 		mDateText.setText("Choose");
 		mDateText.setOnClickListener(new OnClickListener() {
 			@Override
@@ -92,7 +92,7 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final ImageButton dateButton = (ImageButton) findViewById(R.id.booking_detail_date_arrow);
+		final ImageButton dateButton = (ImageButton) findViewById(R.id.stylish_booking_detail_date_arrow);
 		dateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -100,9 +100,9 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final EditText editPhoneNumber = (EditText) findViewById(R.id.booking_detail_edit_phone_number);
+		final EditText editPhoneNumber = (EditText) findViewById(R.id.stylish_booking_detail_edit_phone_number);
 
-		mServiceItemText = (TextView) findViewById(R.id.booking_detail_service_item);
+		mServiceItemText = (TextView) findViewById(R.id.stylish_booking_detail_service_item);
 		mServiceItemText.setText("Choose");
 		mServiceItemText.setOnClickListener(new OnClickListener() {
 			@Override
@@ -111,7 +111,7 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final ImageButton serviceItemButton = (ImageButton) findViewById(R.id.booking_detail_service_item_arrow);
+		final ImageButton serviceItemButton = (ImageButton) findViewById(R.id.stylish_booking_detail_service_item_arrow);
 		serviceItemButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -119,11 +119,11 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final TextView requiredTime = (TextView) findViewById(R.id.booking_detail_required_time);
+		final TextView requiredTime = (TextView) findViewById(R.id.stylish_booking_detail_required_time);
 		final String string = getResources().getString(R.string.booking_detail_required_time);
 		requiredTime.setText(string + ": 1.5hrs");
 
-		final Button confirmButton = (Button) findViewById(R.id.booking_detail_confirm);
+		final Button confirmButton = (Button) findViewById(R.id.stylish_booking_detail_confirm);
 		confirmButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -167,9 +167,9 @@ public class BookingDetailView extends LinearLayout {
 					final int hour = mBookingDate.get(Calendar.HOUR_OF_DAY);
 					final int minute = mBookingDate.get(Calendar.MINUTE);
 					// FIXME
-					final BookingData date = new BookingData(id, name, sex, year, month, day, hour, minute, phoneNumber, mServiceItems, "");
+					final BookingRecord date = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, mServiceItems, 0, 0);
 					// notify database
-					BookingDataManager.getInstance().writeBookingData(date);
+					BookingRecordManager.getInstance().writeBookingRecord(date);
 
 					// notify UI
 					activity.backToBooking();
@@ -195,7 +195,7 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final Button cancelButton = (Button) findViewById(R.id.booking_detail_cancel);
+		final Button cancelButton = (Button) findViewById(R.id.stylish_booking_detail_cancel);
 		cancelButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -422,7 +422,7 @@ public class BookingDetailView extends LinearLayout {
 						final String item = serviceList[i];
 						// add the separated string ", " if it is first item added into string builder
 						if (!"".equals(sb.toString())) {
-							sb.append(BookingDataManager.SEPARATED_STRING);
+							sb.append(BookingRecordManager.SEPARATED_STRING);
 						}
 						sb.append(item);
 						mServiceItems.add(item);
