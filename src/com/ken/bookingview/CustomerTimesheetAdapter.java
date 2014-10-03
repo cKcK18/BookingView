@@ -25,7 +25,7 @@ public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnReco
 		// reuse or create view
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_customer_booking_item_view, null, false);
-			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mBookingItemHeight));
+			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mRecordItemHeight));
 			convertView.setTag(R.id.booking_item_count, mMaxSize);
 		}
 		convertView.setTag(R.id.booking_item_identity, position);

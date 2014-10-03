@@ -21,9 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
+        android:background="@drawable/time_select"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="14dp"
-        android:background="@drawable/time_select" />
+        android:textSize="14sp" />
 
 </com.ken.bookingview.CustomerTimesheetItemView>

@@ -21,7 +21,7 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 		// reuse or create view
 		if (convertView == null) {
 			convertView = new StylishTimesheetItemView(mContext);
-			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mBookingItemHeight));
+			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mRecordItemHeight));
 			convertView.setTag(R.id.booking_item_count, mMaxSize);
 		}
 		convertView.setTag(R.id.booking_item_identity, position);

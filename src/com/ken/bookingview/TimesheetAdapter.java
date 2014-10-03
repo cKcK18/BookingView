@@ -20,7 +20,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 	protected final int mMaxSize;
 	protected ArrayList<BookingRecord> mRecordList;
 
-	protected int mBookingItemHeight = -1;
+	protected int mRecordItemHeight = -1;
 
 	public TimesheetAdapter(Context context, int year, int month, int day, int maxSize) {
 		mContext = context;
@@ -32,7 +32,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 		final BookingRecordManager manager = BookingRecordManager.getInstance();
 		mRecordList = manager.getRecordListByDate(year, month, day);
 
-		mBookingItemHeight = context.getResources().getDimensionPixelSize(R.dimen.booking_item_height);
+		mRecordItemHeight = context.getResources().getDimensionPixelSize(R.dimen.booking_item_height);
 	}
 
 	@Override

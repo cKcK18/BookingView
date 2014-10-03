@@ -106,7 +106,7 @@ public class CustomerTimesheetItemView extends FrameLayout {
 
 		final String string;
 		if (newRecord) {
-			string = mStringNew;
+			string = String.format("%s: %s", mStringNew, mRecord.serviceType.toArray().toString());
 		} else if (hasRecord) {
 			string = mStringFull;
 		} else {

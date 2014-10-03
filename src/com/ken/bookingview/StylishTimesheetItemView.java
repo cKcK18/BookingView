@@ -131,6 +131,16 @@ public class StylishTimesheetItemView extends LinearLayout {
 	}
 
 	@Override
+	public void setTag(int key, Object tag) {
+		super.setTag(key, tag);
+
+		if (key == R.id.booking_item_count) {
+		} else if (key == R.id.booking_item_identity) {
+		} else if (key == R.id.booking_item_info) {
+		}
+	}
+
+	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 
