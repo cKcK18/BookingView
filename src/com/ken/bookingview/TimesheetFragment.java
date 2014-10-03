@@ -72,7 +72,7 @@ public class TimesheetFragment extends Fragment {
 		mPageNumber = getArguments().getInt(ARG_PAGE);
 		mCalendar = DateUtilities.getCalendarByIndex(mPageNumber);
 		mAdapter = recognizeAdapter();
-		BookingRecordManager.getInstance().setOnDataChangedListener(mAdapter);
+		BookingRecordManager.getInstance().setOnRecordChangedListener(mAdapter);
 	}
 
 	private TimesheetAdapter recognizeAdapter() {
@@ -81,10 +81,10 @@ public class TimesheetFragment extends Fragment {
 
 		if (StylishTimesheetAdapter.class.isAssignableFrom(className)) {
 			return new StylishTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
-					mCalendar.get(Calendar.DATE), 24);
+					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR);
 		} else {
 			return new CustomerTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
-					mCalendar.get(Calendar.DATE), 48);
+					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR * 2);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class TimesheetFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		BookingRecordManager.getInstance().removeOnDataChangedListener(mAdapter);
+		BookingRecordManager.getInstance().removeOnRecordChangedListener(mAdapter);
 	}
 
 	public Calendar getCalendar() {

@@ -7,9 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
-import com.ken.bookingview.BookingRecordManager.OnDateChangedListener;
+import com.ken.bookingview.BookingRecordManager.OnRecordChangedListener;
 
-public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnDateChangedListener {
+public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnRecordChangedListener {
 
 	private static final String TAG = CustomerTimesheetAdapter.class.getSimpleName();
 
@@ -35,19 +35,19 @@ public class CustomerTimesheetAdapter extends TimesheetAdapter implements OnDate
 	}
 
 	@Override
-	public void onDataReady() {
-		super.onDataReady();
+	public void onRecordReady() {
+		super.onRecordReady();
 
-		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
+		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mRecordList.size()));
 		notifyDataSetInvalidated();
 	}
 
 	@Override
-	public void onDataChanged() {
-		super.onDataChanged();
+	public void onRecordChanged() {
+		super.onRecordChanged();
 
-		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
-		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
+		mRecordList = BookingRecordManager.getInstance().getRecordListByDate(mYear, mMonth, mDay);
+		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mRecordList.size()));
 		notifyDataSetInvalidated();
 	}
 }

@@ -30,8 +30,8 @@ public class DateItemView extends LinearLayout {
 
 	@Override
 	protected void onFinishInflate() {
-		mDayOfWeekView = (TextView) findViewById(R.id.date_day_of_week);
-		mDayOfMonthView = (TextView) findViewById(R.id.customer_booking_item_status);
+		mDayOfWeekView = (TextView) findViewById(R.id.date_item_day_of_week);
+		mDayOfMonthView = (TextView) findViewById(R.id.date_item_month);
 	}
 
 	public void setUpView() {

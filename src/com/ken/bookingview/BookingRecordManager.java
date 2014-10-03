@@ -21,15 +21,15 @@ public class BookingRecordManager {
 
 	private static BookingRecordManager sManager;
 
-	public interface OnDateChangedListener {
-		void onDataReady();
+	public interface OnRecordChangedListener {
+		void onRecordReady();
 
-		void onDataChanged();
+		void onRecordChanged();
 	}
 
 	private Context mContext;
-	private ArrayList<BookingRecord> mBookingList;
-	private ArrayList<OnDateChangedListener> mOnDateChangedListener;
+	private ArrayList<BookingRecord> mRecordList;
+	private ArrayList<OnRecordChangedListener> mOnRecordChangedListener;
 
 	public static void init(Context context) {
 		if (sManager == null) {
@@ -43,7 +43,7 @@ public class BookingRecordManager {
 
 	private BookingRecordManager(Context context) {
 		mContext = context;
-		mOnDateChangedListener = new ArrayList<OnDateChangedListener>();
+		mOnRecordChangedListener = new ArrayList<OnRecordChangedListener>();
 
 		readBookingRecord();
 	}
@@ -52,7 +52,7 @@ public class BookingRecordManager {
 		new AsyncTask<Void, Void, ArrayList<BookingRecord>>() {
 			@Override
 			protected ArrayList<BookingRecord> doInBackground(Void... params) {
-				final ArrayList<BookingRecord> bookingDataList = new ArrayList<BookingRecord>();
+				final ArrayList<BookingRecord> recordList = new ArrayList<BookingRecord>();
 
 				final ContentResolver cr = mContext.getContentResolver();
 				final Cursor cursor = cr.query(BookingProvider.CONTENT_URI_NO_NOTIFICATION, null, null, null, null);
@@ -60,7 +60,7 @@ public class BookingRecordManager {
 						String.format("[readBookingRecord] cursor is null: %b, size: %d ", cursor == null,
 								cursor != null ? cursor.getCount() : 0));
 				if (cursor == null || cursor.getCount() == 0) {
-					return bookingDataList;
+					return recordList;
 				}
 
 				final int idIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_ID);
@@ -106,22 +106,22 @@ public class BookingRecordManager {
 
 						final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber,
 								serviceItemList, requiredHour, requiredMinute);
-						bookingDataList.add(data);
+						recordList.add(data);
 					}
 				} catch (Exception e) {
-					bookingDataList.clear();
+					recordList.clear();
 				} finally {
 					cursor.close();
 				}
-				return bookingDataList;
+				return recordList;
 			}
 
 			@Override
 			protected void onPostExecute(ArrayList<BookingRecord> result) {
 				Log.d(TAG, String.format("[readBookingRecord] dataList: %d", result != null ? result.size() : 0));
-				mBookingList = result;
-				for (OnDateChangedListener listener : mOnDateChangedListener) {
-					listener.onDataReady();
+				mRecordList = result;
+				for (OnRecordChangedListener listener : mOnRecordChangedListener) {
+					listener.onRecordReady();
 				}
 			}
 		}.execute();
@@ -129,7 +129,7 @@ public class BookingRecordManager {
 
 	public void writeBookingRecord(final BookingRecord updateData) {
 		BookingRecord tempData = null;
-		for (BookingRecord data : mBookingList) {
+		for (BookingRecord data : mRecordList) {
 			if (isTheSameDate(updateData, data)) {
 				tempData = data;
 				break;
@@ -139,7 +139,7 @@ public class BookingRecordManager {
 		final BookingRecord targerData = tempData;
 		final boolean add = targerData == null;
 		if (add) {
-			mBookingList.add(updateData);
+			mRecordList.add(updateData);
 		} else {
 			targerData.setTimeSheetItem(updateData);
 		}
@@ -165,9 +165,9 @@ public class BookingRecordManager {
 
 			@Override
 			protected void onPostExecute(String result) {
-				Log.d(TAG, String.format("[writeBookingRecord] add: %b, dataList: %d", add, mBookingList.size()));
-				for (OnDateChangedListener listener : mOnDateChangedListener) {
-					listener.onDataChanged();
+				Log.d(TAG, String.format("[writeBookingRecord] add: %b, dataList: %d", add, mRecordList.size()));
+				for (OnRecordChangedListener listener : mOnRecordChangedListener) {
+					listener.onRecordChanged();
 				}
 			}
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
@@ -219,18 +219,18 @@ public class BookingRecordManager {
 				&& data1.minute == data2.minute;
 	}
 
-	public void setOnDataChangedListener(OnDateChangedListener listener) {
-		mOnDateChangedListener.add(listener);
+	public void setOnRecordChangedListener(OnRecordChangedListener listener) {
+		mOnRecordChangedListener.add(listener);
 	}
 
-	public void removeOnDataChangedListener(OnDateChangedListener listener) {
-		mOnDateChangedListener.remove(listener);
+	public void removeOnRecordChangedListener(OnRecordChangedListener listener) {
+		mOnRecordChangedListener.remove(listener);
 	}
 
-	public ArrayList<BookingRecord> getBookingListByYear(int year) {
+	public ArrayList<BookingRecord> getRecordListByYear(int year) {
 		final ArrayList<BookingRecord> list = new ArrayList<BookingRecord>();
-		if (mBookingList != null) {
-			for (BookingRecord timeSheet : mBookingList) {
+		if (mRecordList != null) {
+			for (BookingRecord timeSheet : mRecordList) {
 				if (year == timeSheet.year) {
 					list.add(timeSheet);
 				}
@@ -239,10 +239,10 @@ public class BookingRecordManager {
 		return list;
 	}
 
-	public ArrayList<BookingRecord> getBookingListByMonth(int year, int month) {
+	public ArrayList<BookingRecord> getRecordListByMonth(int year, int month) {
 		final ArrayList<BookingRecord> list = new ArrayList<BookingRecord>();
-		if (mBookingList != null) {
-			for (BookingRecord timeSheet : mBookingList) {
+		if (mRecordList != null) {
+			for (BookingRecord timeSheet : mRecordList) {
 				if (year == timeSheet.year && month == timeSheet.month) {
 					list.add(timeSheet);
 				}
@@ -251,10 +251,10 @@ public class BookingRecordManager {
 		return list;
 	}
 
-	public ArrayList<BookingRecord> getBookingListByDate(int year, int month, int date) {
+	public ArrayList<BookingRecord> getRecordListByDate(int year, int month, int date) {
 		final ArrayList<BookingRecord> list = new ArrayList<BookingRecord>();
-		if (mBookingList != null) {
-			for (BookingRecord timeSheet : mBookingList) {
+		if (mRecordList != null) {
+			for (BookingRecord timeSheet : mRecordList) {
 				if (year == timeSheet.year && month == timeSheet.month && date == timeSheet.day) {
 					list.add(timeSheet);
 				}
@@ -265,9 +265,9 @@ public class BookingRecordManager {
 
 	public void release() {
 		mContext = null;
-		mBookingList.clear();
-		mBookingList = null;
-		mOnDateChangedListener.clear();
-		mOnDateChangedListener = null;
+		mRecordList.clear();
+		mRecordList = null;
+		mOnRecordChangedListener.clear();
+		mOnRecordChangedListener = null;
 	}
 }

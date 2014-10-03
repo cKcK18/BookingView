@@ -31,19 +31,19 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 	}
 
 	@Override
-	public void onDataReady() {
-		super.onDataReady();
+	public void onRecordReady() {
+		super.onRecordReady();
 
-		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
+		Log.d(TAG, String.format("[onDataReady] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mRecordList.size()));
 		notifyDataSetInvalidated();
 	}
 
 	@Override
-	public void onDataChanged() {
-		super.onDataChanged();
+	public void onRecordChanged() {
+		super.onRecordChanged();
 
-		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
-		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mBookingList.size()));
+		mRecordList = BookingRecordManager.getInstance().getRecordListByDate(mYear, mMonth, mDay);
+		Log.d(TAG, String.format("[onDataChanged] date: %04d/%02d/%02d, data size: %d", mYear, mMonth, mDay, mRecordList.size()));
 		notifyDataSetInvalidated();
 	}
 }

@@ -17,7 +17,7 @@ public class StylishBookingActivity extends BookingActivity {
 		CALENDAR, DETAIL
 	};
 
-	private ImageButton mAddDataButton;
+	private ImageButton mAddRecordButton;
 	private View mOverlayView;
 	private BookingDetailView mBookingDetailView;
 
@@ -52,8 +52,8 @@ public class StylishBookingActivity extends BookingActivity {
 		});
 
 		// setup the button for entering the detail view
-		mAddDataButton = (ImageButton) findViewById(R.id.stylish_booking_add_button);
-		mAddDataButton.setOnClickListener(new OnClickListener() {
+		mAddRecordButton = (ImageButton) findViewById(R.id.stylish_booking_add_button);
+		mAddRecordButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				mState = State.DETAIL;

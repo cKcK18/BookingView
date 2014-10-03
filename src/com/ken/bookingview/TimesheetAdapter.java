@@ -6,9 +6,9 @@ import java.util.Calendar;
 import android.content.Context;
 import android.widget.BaseAdapter;
 
-import com.ken.bookingview.BookingRecordManager.OnDateChangedListener;
+import com.ken.bookingview.BookingRecordManager.OnRecordChangedListener;
 
-public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChangedListener {
+public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordChangedListener {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = TimesheetAdapter.class.getSimpleName();
@@ -18,7 +18,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 	protected final int mMonth;
 	protected final int mDay;
 	protected final int mMaxSize;
-	protected ArrayList<BookingRecord> mBookingList;
+	protected ArrayList<BookingRecord> mRecordList;
 
 	protected int mBookingItemHeight = -1;
 
@@ -30,7 +30,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 		mMaxSize = maxSize;
 
 		final BookingRecordManager manager = BookingRecordManager.getInstance();
-		mBookingList = manager.getBookingListByDate(year, month, day);
+		mRecordList = manager.getRecordListByDate(year, month, day);
 
 		mBookingItemHeight = context.getResources().getDimensionPixelSize(R.dimen.booking_item_height);
 	}
@@ -42,7 +42,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 
 	@Override
 	public Object getItem(int position) {
-		return mBookingList.get(position);
+		return mRecordList.get(position);
 	}
 
 	@Override
@@ -51,13 +51,13 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 	}
 
 	@Override
-	public void onDataReady() {
-		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+	public void onRecordReady() {
+		mRecordList = BookingRecordManager.getInstance().getRecordListByDate(mYear, mMonth, mDay);
 	}
 
 	@Override
-	public void onDataChanged() {
-		mBookingList = BookingRecordManager.getInstance().getBookingListByDate(mYear, mMonth, mDay);
+	public void onRecordChanged() {
+		mRecordList = BookingRecordManager.getInstance().getRecordListByDate(mYear, mMonth, mDay);
 	}
 
 	protected final BookingRecord getAvailableRecord(int position) {
@@ -69,7 +69,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnDateChan
 
 		// find record first
 		BookingRecord timeSheetItem = null;
-		for (BookingRecord record : mBookingList) {
+		for (BookingRecord record : mRecordList) {
 			Calendar start = Calendar.getInstance();
 			start.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
 
