@@ -36,11 +36,18 @@ public class BookingDetailView extends LinearLayout {
 
 	private static final String TAG = BookingDetailView.class.getSimpleName();
 
-	private Calendar mBookingDate;
-	private ArrayList<String> mServiceItems;
-
+	private TextView mTitleText;
+	private EditText mEditName;
+	private Spinner mSexSpinner;
 	private TextView mDateText;
-	private TextView mServiceItemText;
+	private EditText mEditPhoneNumber;
+	private TextView mServiceTypeText;
+	private TextView mRequiredTime;
+	private Button mDeleteButton;
+
+	private BookingRecord mReferenceRecord;
+	private Calendar mBookingDate;
+	private ArrayList<String> mServiceType;
 
 	private boolean mDatePickerShowing = false;
 
@@ -58,13 +65,15 @@ public class BookingDetailView extends LinearLayout {
 	}
 
 	protected void setUpView(Context context) {
-		mServiceItems = new ArrayList<String>();
+		mServiceType = new ArrayList<String>();
 	}
 
 	@Override
 	protected void onFinishInflate() {
-		final EditText nameText = (EditText) findViewById(R.id.stylish_booking_detail_edit_name);
-		nameText.setOnEditorActionListener(new OnEditorActionListener() {
+		mTitleText = (TextView) findViewById(R.id.stylish_booking_detail_title);
+
+		mEditName = (EditText) findViewById(R.id.stylish_booking_detail_edit_name);
+		mEditName.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				// not work
@@ -77,18 +86,19 @@ public class BookingDetailView extends LinearLayout {
 			}
 		});
 
-		final Spinner sexSpinner = (Spinner) findViewById(R.id.stylish_booking_detail_sex_spinner);
 		final String[] sexList = getResources().getStringArray(R.array.sex_array);
+		mSexSpinner = (Spinner) findViewById(R.id.stylish_booking_detail_sex_spinner);
 		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.layout_spinner_item, sexList);
 		dataAdapter.setDropDownViewResource(R.layout.layout_spinner_dropdown_item);
-		sexSpinner.setAdapter(dataAdapter);
+		mSexSpinner.setAdapter(dataAdapter);
 
+		final String choiceString = getResources().getString(R.string.booking_detail_choice);
 		mDateText = (TextView) findViewById(R.id.stylish_booking_detail_date);
-		mDateText.setText("Choose");
+		mDateText.setText(choiceString);
 		mDateText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				popupDatePickerDialog();
+				popupDatePickerDialog(mReferenceRecord);
 			}
 		});
 
@@ -96,44 +106,46 @@ public class BookingDetailView extends LinearLayout {
 		dateButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				popupDatePickerDialog();
+				popupDatePickerDialog(mReferenceRecord);
 			}
 		});
 
-		final EditText editPhoneNumber = (EditText) findViewById(R.id.stylish_booking_detail_edit_phone_number);
+		mEditPhoneNumber = (EditText) findViewById(R.id.stylish_booking_detail_edit_phone_number);
 
-		mServiceItemText = (TextView) findViewById(R.id.stylish_booking_detail_service_item);
-		mServiceItemText.setText("Choose");
-		mServiceItemText.setOnClickListener(new OnClickListener() {
+		mServiceTypeText = (TextView) findViewById(R.id.stylish_booking_detail_service_type);
+		mServiceTypeText.setText(choiceString);
+		mServiceTypeText.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				popupServicePickerDialog();
+				popupServicePickerDialog(mReferenceRecord);
 			}
 		});
 
-		final ImageButton serviceItemButton = (ImageButton) findViewById(R.id.stylish_booking_detail_service_item_arrow);
-		serviceItemButton.setOnClickListener(new OnClickListener() {
+		final ImageButton serviceTypeButton = (ImageButton) findViewById(R.id.stylish_booking_detail_service_type_arrow);
+		serviceTypeButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				popupServicePickerDialog();
+				popupServicePickerDialog(mReferenceRecord);
 			}
 		});
 
-		final TextView requiredTime = (TextView) findViewById(R.id.stylish_booking_detail_required_time);
 		final String string = getResources().getString(R.string.booking_detail_required_time);
-		requiredTime.setText(string + ": 1.5hrs");
+		final String hour = getResources().getString(R.string.booking_detail_required_hour);
+		mRequiredTime = (TextView) findViewById(R.id.stylish_booking_detail_required_time);
+		// FIXME
+		mRequiredTime.setText(string + ": 1.5 " + hour);
 
 		final Button confirmButton = (Button) findViewById(R.id.stylish_booking_detail_confirm);
 		confirmButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				final String name = nameText.getText().toString();
+				final String name = mEditName.getText().toString();
 				final boolean invalidName = name == null || name.equals("");
 				if (invalidName) {
 					Toast.makeText(BookingDetailView.this.getContext(), "invalide name", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				final String sex = sexSpinner.getSelectedItem().toString();
+				final String sex = mSexSpinner.getSelectedItem().toString();
 				final boolean invalidSex = sex == null || sex.equals("");
 				if (invalidSex) {
 					Toast.makeText(BookingDetailView.this.getContext(), "invalide sex", Toast.LENGTH_SHORT).show();
@@ -144,51 +156,45 @@ public class BookingDetailView extends LinearLayout {
 					Toast.makeText(BookingDetailView.this.getContext(), "invalide date", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				final String phoneNumber = editPhoneNumber.getText().toString();
+				final String phoneNumber = mEditPhoneNumber.getText().toString();
 				final boolean invalidPhoneNumber = phoneNumber == null || phoneNumber.equals("");
 				if (invalidPhoneNumber) {
 					Toast.makeText(BookingDetailView.this.getContext(), "invalide phone number", Toast.LENGTH_SHORT).show();
 					return;
 				}
-				final boolean invalidServiceItem = mServiceItems.size() == 0;
-				if (invalidServiceItem) {
-					Toast.makeText(BookingDetailView.this.getContext(), "invalide service item", Toast.LENGTH_SHORT).show();
+				final boolean invalidServiceType = mServiceType.size() == 0;
+				if (invalidServiceType) {
+					Toast.makeText(BookingDetailView.this.getContext(), "invalide service type", Toast.LENGTH_SHORT).show();
 					return;
 				}
 
 				// save the booking and notify data and UI
 				final StylishBookingActivity activity = getActivity();
 				if (activity != null) {
-					final BookingApplication app = (BookingApplication) activity.getApplicationContext();
-					final long id = app.getBookingProvider().generateNewId();
 					final int year = mBookingDate.get(Calendar.YEAR);
 					final int month = mBookingDate.get(Calendar.MONTH);
 					final int day = mBookingDate.get(Calendar.DATE);
 					final int hour = mBookingDate.get(Calendar.HOUR_OF_DAY);
 					final int minute = mBookingDate.get(Calendar.MINUTE);
+					final ArrayList<String> serviceType = new ArrayList<String>(mServiceType);
 					// FIXME
-					final BookingRecord date = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, mServiceItems, 0, 0);
+					final BookingRecord record;
+					if (mReferenceRecord != null) {
+						// FIXME
+						record = null;
+					} else {
+						record = new BookingRecord(name, sex, year, month, day, hour, minute, phoneNumber, serviceType, 1, 30);
+					}
 					// notify database
-					BookingRecordManager.getInstance().writeBookingRecord(date);
+					BookingRecordManager.getInstance().writeBookingRecord(record);
 
 					// notify UI
-					activity.backToBooking();
-					final boolean show = false;
-					final boolean animate = true;
-					activity.showDetailView(show, animate);
-					Toast.makeText(BookingDetailView.this.getContext(), "add completed", Toast.LENGTH_SHORT).show();
-
-					// clear all
 					postDelayed(new Runnable() {
 						@Override
 						public void run() {
-							nameText.setText(null);
-							nameText.requestFocus();
-							sexSpinner.setSelection(0);
-							mDateText.setText("Choose");
-							editPhoneNumber.setText(null);
-							mServiceItems.clear();
-							mServiceItemText.setText("Choose");
+							final boolean show = false;
+							activity.showDetailView(show);
+							Toast.makeText(BookingDetailView.this.getContext(), "add completed", Toast.LENGTH_SHORT).show();
 						}
 					}, 500);
 				}
@@ -200,13 +206,15 @@ public class BookingDetailView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 				final boolean show = false;
-				final boolean animate = true;
 				final StylishBookingActivity activity = getActivity();
 				if (activity != null) {
-					activity.showDetailView(show, animate);
+					activity.showDetailView(show);
 				}
 			}
 		});
+
+		mDeleteButton = (Button) findViewById(R.id.stylish_booking_detail_delete);
+		mDeleteButton.setOnClickListener(null);
 	}
 
 	private StylishBookingActivity getActivity() {
@@ -216,70 +224,56 @@ public class BookingDetailView extends LinearLayout {
 		return null;
 	}
 
-	private void popupDatePickerDialog() {
+	private void popupDatePickerDialog(BookingRecord referenceRecord) {
 		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
-			DialogFragment newFragment = new DatePickerFragment();
+			DialogFragment newFragment = new DatePickerFragment(referenceRecord);
 			newFragment.show(activity.getSupportFragmentManager(), "datePicker");
 		}
 	}
 
-	private void popupTimePickerDialog(Calendar calendar) {
+	private void popupTimePickerDialog(BookingRecord referenceRecord, Calendar calendar) {
 		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
-			DialogFragment newFragment = new TimePickerFragment(calendar);
+			DialogFragment newFragment = new TimePickerFragment(referenceRecord, calendar);
 			newFragment.show(activity.getSupportFragmentManager(), "timePicker");
 		}
 	}
 
-	private void popupServicePickerDialog() {
+	private void popupServicePickerDialog(BookingRecord referenceRecord) {
 		final StylishBookingActivity activity = getActivity();
 		if (activity != null) {
-			DialogFragment newFragment = new ServicePickerFragment();
+			DialogFragment newFragment = new ServicePickerFragment(referenceRecord);
 			newFragment.show(activity.getSupportFragmentManager(), "servicePicker");
 		}
 	}
 
-	public void show(final boolean show, boolean animate) {
-		final float tranY = show ? 0 : getHeight();
-		final int duration = animate ? 300 : 0;
-
-		animate().translationY(tranY).setDuration(duration).setInterpolator(new DecelerateInterpolator())
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationStart(Animator animation) {
-						if (show) {
-							setVisibility(View.VISIBLE);
-						}
-					}
-
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						if (!show) {
-							setVisibility(View.GONE);
-							// back to activity
-							final StylishBookingActivity activity = getActivity();
-							if (activity != null) {
-								activity.backToBooking();
-							}
-						}
-						setTranslationY(tranY);
-					}
-				}).start();
-	}
-
 	private class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
+		BookingRecord referenceRecord;
 		Calendar calendar = DateUtilities.getInstance();
 		boolean positive = false;
 
+		public DatePickerFragment(BookingRecord record) {
+			this.referenceRecord = record;
+		}
+
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the current date as the default date in the picker
-			final Calendar date = Calendar.getInstance();
-			int year = date.get(Calendar.YEAR);
-			int month = date.get(Calendar.MONTH);
-			int day = date.get(Calendar.DAY_OF_MONTH);
+			// Use the updated record or the current date as the default date in the picker
+			final int year;
+			final int month;
+			final int day;
+			if (referenceRecord != null) {
+				year = referenceRecord.year;
+				month = referenceRecord.month - 1;
+				day = referenceRecord.day;
+			} else {
+				final Calendar date = Calendar.getInstance();
+				year = date.get(Calendar.YEAR);
+				month = date.get(Calendar.MONTH);
+				day = date.get(Calendar.DAY_OF_MONTH);
+			}
 
 			// Create a new instance of DatePickerDialog and return it
 			DatePickerDialog datePicker = new DatePickerDialog(getActivity(), this, year, month, day);
@@ -307,7 +301,7 @@ public class BookingDetailView extends LinearLayout {
 			mDatePickerShowing = true;
 			if (positive) {
 				calendar.set(year, month, day);
-				popupTimePickerDialog(calendar);
+				popupTimePickerDialog(referenceRecord, calendar);
 
 				positive = false;
 			}
@@ -316,19 +310,28 @@ public class BookingDetailView extends LinearLayout {
 
 	private class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 
+		BookingRecord referenceRecord;
 		Calendar calendar;
 		boolean positive = false;
 
-		TimePickerFragment(Calendar calendar) {
+		TimePickerFragment(BookingRecord record, Calendar calendar) {
+			this.referenceRecord = record;
 			this.calendar = calendar;
 		}
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the current time as the default values for the picker
-			final Calendar date = Calendar.getInstance();
-			int hour = date.get(Calendar.HOUR_OF_DAY);
-			int minute = date.get(Calendar.MINUTE);
+			// Use the updated record or the current time as the default values for the picker
+			final int hour;
+			final int minute;
+			if (referenceRecord != null) {
+				hour = referenceRecord.hourOfDay;
+				minute = referenceRecord.minute;
+			} else {
+				final Calendar date = Calendar.getInstance();
+				hour = date.get(Calendar.HOUR_OF_DAY);
+				minute = date.get(Calendar.MINUTE);
+			}
 
 			// Create a new instance of TimePickerDialog and return it
 			TimePickerDialog timePicker = new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
@@ -355,14 +358,11 @@ public class BookingDetailView extends LinearLayout {
 				final int year = calendar.get(Calendar.YEAR);
 				final int month = calendar.get(Calendar.MONTH) + 1;
 				final int day = calendar.get(Calendar.DATE);
-				final String yearString = getResources().getString(R.string.booking_detail_year);
-				final String monthString = getResources().getString(R.string.booking_detail_month);
-				final String dayString = getResources().getString(R.string.booking_detail_day);
 
 				mBookingDate = Calendar.getInstance();
 				mBookingDate.set(year, month, day, hourOfDay, minute);
-				String string = String.format("%04d%s%2d%s%2d%s %02d:%02d", year, yearString, month, monthString, day, dayString,
-						hourOfDay, minute);
+
+				final String string = getDateString(mBookingDate);
 				mDateText.setText(string);
 				positive = false;
 
@@ -373,9 +373,14 @@ public class BookingDetailView extends LinearLayout {
 
 	public class ServicePickerFragment extends DialogFragment {
 
+		private BookingRecord referenceRecord;
 		private String[] serviceList;
 		private boolean[] checkedItems;
 		private boolean[] unconfirmedCheckedItems;
+
+		public ServicePickerFragment(BookingRecord referenceRecord) {
+			this.referenceRecord = referenceRecord;
+		}
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -385,16 +390,30 @@ public class BookingDetailView extends LinearLayout {
 			checkedItems = new boolean[serviceList.length];
 			unconfirmedCheckedItems = new boolean[serviceList.length];
 
-			// reset the last checked item
-			for (int i = 0; i < serviceList.length; ++i) {
-				boolean checked = false;
-				for (int j = 0; j < mServiceItems.size(); ++j) {
-					if (serviceList[i].equals(mServiceItems.get(j))) {
-						checked = true;
-						break;
+			if (referenceRecord != null) {
+				final ArrayList<String> serviceType = referenceRecord.serviceType;
+				for (int i = 0; i < serviceList.length; ++i) {
+					boolean checked = false;
+					for (int j = 0; j < serviceType.size(); ++j) {
+						if (serviceList[i].equals(serviceType.get(j))) {
+							checked = true;
+							break;
+						}
 					}
+					checkedItems[i] = unconfirmedCheckedItems[i] = checked;
 				}
-				checkedItems[i] = unconfirmedCheckedItems[i] = checked;
+			} else {
+				// reset the last checked item
+				for (int i = 0; i < serviceList.length; ++i) {
+					boolean checked = false;
+					for (int j = 0; j < mServiceType.size(); ++j) {
+						if (serviceList[i].equals(mServiceType.get(j))) {
+							checked = true;
+							break;
+						}
+					}
+					checkedItems[i] = unconfirmedCheckedItems[i] = checked;
+				}
 			}
 		}
 
@@ -411,7 +430,7 @@ public class BookingDetailView extends LinearLayout {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					final StringBuilder sb = new StringBuilder("");
-					mServiceItems.clear();
+					mServiceType.clear();
 
 					// save selected item according to the boolean array
 					for (int i = 0; i < unconfirmedCheckedItems.length; ++i) {
@@ -422,12 +441,12 @@ public class BookingDetailView extends LinearLayout {
 						final String item = serviceList[i];
 						// add the separated string ", " if it is first item added into string builder
 						if (!"".equals(sb.toString())) {
-							sb.append(BookingRecordManager.SEPARATED_STRING);
+							sb.append(BookingRecord.SEPARATED_STRING);
 						}
 						sb.append(item);
-						mServiceItems.add(item);
+						mServiceType.add(item);
 					}
-					mServiceItemText.setText(sb.toString());
+					mServiceTypeText.setText(sb.toString());
 				}
 			});
 			builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -441,5 +460,111 @@ public class BookingDetailView extends LinearLayout {
 			});
 			return builder.create();
 		}
+	}
+
+	public void show(final boolean show, final BookingRecord referenceRecord) {
+		final float tranY = show ? 0 : getHeight();
+
+		// switch title and setup clear button when add or update
+		mReferenceRecord = referenceRecord;
+		if (referenceRecord == null) {
+			mTitleText.setText(getResources().getString(R.string.booking_detail_add_title));
+			mDeleteButton.setVisibility(GONE);
+			mDeleteButton.setOnClickListener(null);
+
+			resetForm();
+		} else {
+			mTitleText.setText(getResources().getString(R.string.booking_detail_update_title));
+			mDeleteButton.setVisibility(VISIBLE);
+			mDeleteButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					deleteRecord(referenceRecord);
+				}
+			});
+			fillOutForm(referenceRecord);
+		}
+
+		animate().translationY(tranY).setDuration(300).setInterpolator(new DecelerateInterpolator())
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationStart(Animator animation) {
+						if (show) {
+							setVisibility(View.VISIBLE);
+						}
+					}
+
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						if (!show) {
+							setVisibility(View.GONE);
+						}
+						setTranslationY(tranY);
+					}
+				}).start();
+	}
+
+	private void resetForm() {
+		final String choiceString = getResources().getString(R.string.booking_detail_choice);
+
+		mEditName.setText(null);
+		mEditName.requestFocus();
+		mSexSpinner.setSelection(0);
+		mDateText.setText(choiceString);
+		mEditPhoneNumber.setText(null);
+		mServiceType.clear();
+		mServiceTypeText.setText(choiceString);
+	}
+
+	private void fillOutForm(BookingRecord referenceRecord) {
+		mEditName.setText(referenceRecord.name);
+
+		final String dateString = getDateString(referenceRecord);
+		mDateText.setText(dateString);
+
+		mEditPhoneNumber.setText(referenceRecord.phoneNumber);
+
+		final String serviceTypeString = BookingRecord.flattenServiceType(referenceRecord.serviceType);
+		mServiceTypeText.setText(serviceTypeString);
+
+		final String string = getResources().getString(R.string.booking_detail_required_time);
+		final float time = referenceRecord.requiredHour + (float) referenceRecord.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
+		final String hourString = getResources().getString(R.string.booking_detail_required_hour);
+		final String requiredTimeString = String.format("%s: %.1f %s", string, time, hourString);
+		mRequiredTime.setText(requiredTimeString);
+	}
+
+	private void deleteRecord(BookingRecord deleteRecord) {
+		final StylishBookingActivity activity = getActivity();
+		final boolean show = false;
+		activity.showDetailView(show);
+
+		BookingRecordManager.getInstance().deleteBookingRecord(deleteRecord);
+	}
+
+	private String getDateString(BookingRecord referenceRecord) {
+		final int year = referenceRecord.year;
+		final int month = referenceRecord.month;
+		final int day = referenceRecord.day;
+		final int hourOfDay = referenceRecord.hourOfDay;
+		final int minute = referenceRecord.minute;
+		final String yearString = getResources().getString(R.string.booking_detail_year);
+		final String monthString = getResources().getString(R.string.booking_detail_month);
+		final String dayString = getResources().getString(R.string.booking_detail_day);
+
+		return String.format("%04d%s%2d%s%2d%s %02d:%02d", year, yearString, month, monthString, day, dayString, hourOfDay, minute);
+	}
+
+	private String getDateString(Calendar calendar) {
+		final int year = calendar.get(Calendar.YEAR);
+		final int month = calendar.get(Calendar.MONTH);
+		final int day = calendar.get(Calendar.DATE);
+		final int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+		final int minute = calendar.get(Calendar.MINUTE);
+		final String yearString = getResources().getString(R.string.booking_detail_year);
+		final String monthString = getResources().getString(R.string.booking_detail_month);
+		final String dayString = getResources().getString(R.string.booking_detail_day);
+
+		return String.format("%04d%s%2d%s%2d%s %02d:%02d", year, yearString, month, monthString, day, dayString, hourOfDay, minute);
 	}
 }

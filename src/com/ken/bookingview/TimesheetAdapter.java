@@ -75,22 +75,25 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 		BookingRecord timeSheetItem = null;
 		for (BookingRecord record : mRecordList) {
 			Calendar start = Calendar.getInstance();
-			start.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
-
 			Calendar end = Calendar.getInstance();
-			end.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
+			Calendar target = Calendar.getInstance();
 			if (ignoreRequiredTime()) {
-				final int unitHour = unitMinutes / DateUtilities.A_HOUR_IN_MINUTE;
-				final int unitMinute = unitMinutes % DateUtilities.A_HOUR_IN_MINUTE;
-				end.add(Calendar.HOUR_OF_DAY, unitHour);
-				end.add(Calendar.MINUTE, unitMinute);
+				start.set(mYear, mMonth, mDay, hour, minute, 0);
+
+				end.set(mYear, mMonth, mDay, hour, minute, 0);
+				end.add(Calendar.HOUR_OF_DAY, unitMinutes / DateUtilities.A_HOUR_IN_MINUTE);
+				end.add(Calendar.MINUTE, unitMinutes % DateUtilities.A_HOUR_IN_MINUTE);
+
+				target.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
 			} else {
+				start.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
+
+				end.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
 				end.add(Calendar.HOUR_OF_DAY, record.requiredHour);
 				end.add(Calendar.MINUTE, record.requiredMinute);
-			}
 
-			Calendar target = Calendar.getInstance();
-			target.set(mYear, mMonth, mDay, hour, minute, 0);
+				target.set(mYear, mMonth, mDay, hour, minute, 0);
+			}
 
 			if (DateUtilities.within(start, end, target)) {
 				timeSheetItem = record;

@@ -5,9 +5,6 @@ import java.util.Hashtable;
 
 import org.json.JSONObject;
 
-import android.content.ContentResolver;
-import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -15,9 +12,12 @@ public class BookingRecordManager {
 
 	private static final String TAG = BookingRecordManager.class.getSimpleName();
 
-	private static final String SERVER_RECORD_URL = "http://106.187.42.254:3000/users";
-
-	static final String SEPARATED_STRING = ", ";
+	private static final String SERVER_URL = "http://106.187.42.254:3000";
+	private static final String SERVER_ADD_URL = SERVER_URL + "/add";
+	private static final String SERVER_UPDATE_URL = SERVER_URL + "/update";
+	private static final String SERVER_DELETE_URL = SERVER_URL + "/delete";
+	@SuppressWarnings("unused")
+	private static final String SERVER_QUERY_URL = SERVER_URL + "/query";
 
 	private static BookingRecordManager sManager;
 
@@ -27,22 +27,17 @@ public class BookingRecordManager {
 		void onRecordChanged();
 	}
 
-	private Context mContext;
 	private ArrayList<BookingRecord> mRecordList;
 	private ArrayList<OnRecordChangedListener> mOnRecordChangedListener;
 
-	public static void init(Context context) {
-		if (sManager == null) {
-			sManager = new BookingRecordManager(context);
-		}
-	}
-
 	public static BookingRecordManager getInstance() {
+		if (sManager == null) {
+			sManager = new BookingRecordManager();
+		}
 		return sManager;
 	}
 
-	private BookingRecordManager(Context context) {
-		mContext = context;
+	private BookingRecordManager() {
 		mOnRecordChangedListener = new ArrayList<OnRecordChangedListener>();
 
 		readBookingRecord();
@@ -54,65 +49,31 @@ public class BookingRecordManager {
 			protected ArrayList<BookingRecord> doInBackground(Void... params) {
 				final ArrayList<BookingRecord> recordList = new ArrayList<BookingRecord>();
 
-				final ContentResolver cr = mContext.getContentResolver();
-				final Cursor cursor = cr.query(BookingProvider.CONTENT_URI_NO_NOTIFICATION, null, null, null, null);
-				Log.d(TAG,
-						String.format("[readBookingRecord] cursor is null: %b, size: %d ", cursor == null,
-								cursor != null ? cursor.getCount() : 0));
-				if (cursor == null || cursor.getCount() == 0) {
-					return recordList;
-				}
+				ArrayList<String> serviceType = new ArrayList<String>();
+				serviceType.add("°Å¾v");
+				serviceType.add("¬~¾v");
 
-				final int idIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_ID);
-				final int nameIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_NAME);
-				final int sexIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_SEX);
-				final int yearIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_YEAR);
-				final int monthIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_MONTH);
-				final int dayIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_DAY);
-				final int hourIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_HOUR_OF_DAY);
-				final int minuteIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_MINUTE);
-				final int phoneNumberIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_PHONE_NUMBER);
-				final int serviceTypeIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_SERVICE_TYPE);
-				final int requiredHourIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_REQUIRED_HOUR);
-				final int requiredMinuteIndex = cursor.getColumnIndexOrThrow(BookingProvider.COLUMN_REQUIRED_MINUTE);
+				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 10, 3, 1, 15, "0985091642", serviceType, 2, 30);
+				recordList.add(record);
 
-				try {
-					cursor.moveToFirst();
-					while (cursor.moveToNext()) {
-						final long id = cursor.getLong(idIndex);
-						final String name = cursor.getString(nameIndex);
-						final String sex = cursor.getString(sexIndex);
-						final int year = cursor.getInt(yearIndex);
-						final int month = cursor.getInt(monthIndex);
-						final int day = cursor.getInt(dayIndex);
-						final int hour = cursor.getInt(hourIndex);
-						final int minute = cursor.getInt(minuteIndex);
-						final String phoneNumber = cursor.getString(phoneNumberIndex);
-						final String serviceItems = cursor.getString(serviceTypeIndex);
-						Log.d(TAG, "[read] serviceItems: " + serviceItems);
-						// FIXME
-						final String[] parts = serviceItems.split(SEPARATED_STRING);
-						Log.d(TAG, "[read] parts: " + parts);
-						final ArrayList<String> serviceItemList = new ArrayList<String>();
-						if (parts != null) {
-							for (int i = 0; i < parts.length; ++i) {
-								Log.d(TAG, "[read] parts[" + i + "]: " + parts[i]);
-								serviceItemList.add(parts[i]);
-							}
-						}
-						Log.d(TAG, "[read] serviceItemsList: " + serviceItemList.size());
-						final int requiredHour = cursor.getInt(requiredHourIndex);
-						final int requiredMinute = cursor.getInt(requiredMinuteIndex);
-
-						final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber,
-								serviceItemList, requiredHour, requiredMinute);
-						recordList.add(data);
-					}
-				} catch (Exception e) {
-					recordList.clear();
-				} finally {
-					cursor.close();
-				}
+				// Log.d(TAG, "[read] serviceItems: " + serviceItems);
+				// // FIXME
+				// final String[] parts = serviceItems.split(SEPARATED_STRING);
+				// Log.d(TAG, "[read] parts: " + parts);
+				// final ArrayList<String> serviceItemList = new ArrayList<String>();
+				// if (parts != null) {
+				// for (int i = 0; i < parts.length; ++i) {
+				// Log.d(TAG, "[read] parts[" + i + "]: " + parts[i]);
+				// serviceItemList.add(parts[i]);
+				// }
+				// }
+				// Log.d(TAG, "[read] serviceItemsList: " + serviceItemList.size());
+				// final int requiredHour = cursor.getInt(requiredHourIndex);
+				// final int requiredMinute = cursor.getInt(requiredMinuteIndex);
+				//
+				// final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, serviceItemList,
+				// requiredHour, requiredMinute);
+				// recordList.add(data);
 				return recordList;
 			}
 
@@ -141,7 +102,7 @@ public class BookingRecordManager {
 		if (add) {
 			mRecordList.add(updateRecord);
 		} else {
-			targerData.setTimeSheetItem(updateRecord);
+			targerData.updateRecord(updateRecord);
 		}
 		// write database
 		new AsyncTask<Void, Void, String>() {
@@ -153,9 +114,10 @@ public class BookingRecordManager {
 					headers.put("Accept", "application/json");
 					headers.put("Content-Type", "application/json");
 					final String stringBody = getPostBody(updateRecord.name, updateRecord.sex, updateRecord.year, updateRecord.month,
-							updateRecord.day, updateRecord.hourOfDay, updateRecord.minute, updateRecord.phoneNumber, updateRecord.serviceType,
-							updateRecord.requiredHour, updateRecord.requiredMinute);
-					String response = restClient.post(SERVER_RECORD_URL, stringBody, headers);
+							updateRecord.day, updateRecord.hourOfDay, updateRecord.minute, updateRecord.phoneNumber,
+							updateRecord.serviceType, updateRecord.requiredHour, updateRecord.requiredMinute);
+					final String url = add ? SERVER_ADD_URL : SERVER_UPDATE_URL;
+					String response = restClient.post(url, stringBody, headers);
 					return response;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -173,9 +135,47 @@ public class BookingRecordManager {
 		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 	}
 
+	public void deleteBookingRecord(final BookingRecord deleteRecord) {
+		// delete in memory
+		if (mRecordList != null) {
+			mRecordList.remove(deleteRecord);
+		}
+
+		// write database
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... params) {
+				RestClient restClient = new RestClient();
+				try {
+					final Hashtable<String, String> headers = new Hashtable<String, String>();
+					headers.put("Accept", "application/json");
+					headers.put("Content-Type", "application/json");
+					final String stringBody = getPostBody(deleteRecord.name, deleteRecord.sex, deleteRecord.year, deleteRecord.month,
+							deleteRecord.day, deleteRecord.hourOfDay, deleteRecord.minute, deleteRecord.phoneNumber,
+							deleteRecord.serviceType, deleteRecord.requiredHour, deleteRecord.requiredMinute);
+					String response = restClient.post(SERVER_DELETE_URL, stringBody, headers);
+					return response;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				Log.d(TAG, String.format("[writeBookingRecord] dataList: %d", mRecordList.size()));
+				for (OnRecordChangedListener listener : mOnRecordChangedListener) {
+					listener.onRecordChanged();
+				}
+			}
+		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+	}
+
 	private String getPostBody(String name, String sex, int year, int month, int day, int hourOfDay, int minute, String phoneNumber,
 			ArrayList<String> serviceType, int requiredHour, int requiredMinute) {
 		try {
+			final String flatten = BookingRecord.flattenServiceType(serviceType);
+
 			JSONObject record = new JSONObject();
 			record.put("name", name);
 			record.put("sex", sex);
@@ -185,28 +185,11 @@ public class BookingRecordManager {
 			record.put("hourOfDay", hourOfDay);
 			record.put("minute", minute);
 			record.put("phoneNumber", phoneNumber);
-
-			final int serviceTypeSize = serviceType.size();
-			Log.d(TAG, "[getPostBody] serviceTypeSize: " + serviceTypeSize);
-			final StringBuilder sb = new StringBuilder("");
-			for (int i = 0; i < serviceTypeSize; ++i) {
-				Log.d(TAG, "[getPostBody] parts[" + i + "]: " + serviceType.get(i));
-				final String type = serviceType.get(i);
-				// add the separated string ", " if it is first item added into string builder
-				if (!"".equals(sb.toString())) {
-					sb.append(BookingRecordManager.SEPARATED_STRING);
-				}
-				sb.append(type);
-			}
-			Log.d(TAG, "[getPostBody] out: " + sb.toString());
-			record.put("serviceType", sb.toString());
+			record.put("serviceType", flatten);
 			record.put("requiredHour", requiredHour);
 			record.put("requiredMinute", requiredMinute);
 
-			JSONObject body = new JSONObject();
-			body.put("record", record);
-
-			String result = body.toString();
+			String result = record.toString();
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -264,7 +247,6 @@ public class BookingRecordManager {
 	}
 
 	public void release() {
-		mContext = null;
 		mRecordList.clear();
 		mRecordList = null;
 		mOnRecordChangedListener.clear();

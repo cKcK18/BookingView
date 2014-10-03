@@ -38,7 +38,7 @@
                 android:lines="1"
                 android:text="@string/stylish_booking_view_title"
                 android:textColor="#B9BAD5"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
 
             <Button
                 android:id="@+id/stylish_booking_today_button"
@@ -53,7 +53,7 @@
                 android:paddingRight="14dp"
                 android:text="@string/stylish_booking_view_today"
                 android:textColor="#27284A"
-                android:textSize="28sp" />
+                android:textSize="26sp" />
         </RelativeLayout>
 
         <include

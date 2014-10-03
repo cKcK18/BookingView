@@ -2,8 +2,10 @@ package com.ken.bookingview;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,7 +16,7 @@ public class StylishBookingActivity extends BookingActivity {
 	private static final String TAG = StylishBookingActivity.class.getSimpleName();
 
 	private enum State {
-		CALENDAR, DETAIL
+		CALENDAR, DETAIL_VIEW
 	};
 
 	private ImageButton mAddRecordButton;
@@ -56,14 +58,18 @@ public class StylishBookingActivity extends BookingActivity {
 		mAddRecordButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mState = State.DETAIL;
 				final boolean show = true;
-				final boolean animate = true;
-				showDetailView(show, animate);
+				showDetailView(show);
 			}
 		});
 
 		mOverlayView = (View) findViewById(R.id.stylish_booking_overlay);
+		mOverlayView.setOnTouchListener(new OnTouchListener() {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				return true;
+			}
+		});
 
 		final int tranY = getResources().getDisplayMetrics().heightPixels;
 		mBookingDetailView = (BookingDetailView) findViewById(R.id.stylish_booking_detail_view);
@@ -72,31 +78,34 @@ public class StylishBookingActivity extends BookingActivity {
 		super.setUpView();
 	}
 
-	public void backToBooking() {
-		mState = State.CALENDAR;
-	}
-
 	@Override
 	public void onBackPressed() {
-		if (mState == State.DETAIL) {
+		if (mState == State.DETAIL_VIEW) {
 			final boolean show = false;
-			final boolean animate = true;
-			showDetailView(show, animate);
+			showDetailView(show);
 		} else {
 			super.onBackPressed();
 		}
 	}
 
-	public void showDetailView(boolean show, boolean animate) {
-		mBookingDetailView.show(show, animate);
-		overlay(show, animate);
+	public void showDetailView(boolean show) {
+		showDetailView(show, null);
 	}
 
-	private void overlay(final boolean show, boolean animate) {
-		final float alpha = show ? 1.0f : 0.0f;
-		final int duration = animate ? 300 : 0;
+	public void showDetailView(boolean show, BookingRecord updateRecord) {
+		if (show) {
+			mState = State.DETAIL_VIEW;
+		} else {
+			mState = State.CALENDAR;
+		}
+		mBookingDetailView.show(show, updateRecord);
+		overlay(show);
+	}
 
-		mOverlayView.animate().alpha(alpha).setDuration(duration).setInterpolator(new DecelerateInterpolator())
+	private void overlay(final boolean show) {
+		final float alpha = show ? 0.5f : 0.0f;
+
+		mOverlayView.animate().alpha(alpha).setDuration(300).setInterpolator(new DecelerateInterpolator())
 				.setListener(new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationStart(Animator animation) {

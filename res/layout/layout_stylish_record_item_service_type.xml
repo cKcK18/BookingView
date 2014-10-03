@@ -10,6 +10,7 @@
     android:paddingRight="8dp"
     android:paddingTop="3dp"
     android:textColor="@android:color/white"
-    android:textSize="13sp" >
+    android:textSize="14sp"
+    android:textStyle="bold" >
 
 </TextView>

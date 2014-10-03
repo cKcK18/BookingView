@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -14,8 +14,6 @@ public class StylishTimesheetItemView extends LinearLayout {
 
 	@SuppressWarnings("unused")
 	private static final String TAG = StylishTimesheetItemView.class.getSimpleName();
-
-	private static final int MAX_SERVICE_ITEM = 3;
 
 	private TextView mHourView;
 	private ViewGroup mServiceType;
@@ -35,6 +33,13 @@ public class StylishTimesheetItemView extends LinearLayout {
 	}
 
 	protected void setUpView(Context context) {
+	}
+
+	private StylishBookingActivity getActivity() {
+		if (getContext() instanceof StylishBookingActivity) {
+			return (StylishBookingActivity) getContext();
+		}
+		return null;
 	}
 
 	@Override
@@ -80,6 +85,9 @@ public class StylishTimesheetItemView extends LinearLayout {
 		final Object object = getTag(R.id.booking_item_info);
 		// check that any record in the time
 		if (object == null) {
+			mServiceType.removeAllViews();
+			mRecordInfo.setText(null);
+			setOnClickListener(null);
 			return;
 		}
 		final BookingRecord record = (BookingRecord) object;
@@ -87,37 +95,50 @@ public class StylishTimesheetItemView extends LinearLayout {
 		// add service type
 		final ArrayList<String> serviceType = record.serviceType;
 		final int size = serviceType.size();
-		if (size > 0) {
-			for (String type : serviceType) {
-				final TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_type,
-						null, false);
-				tv.setText(type);
+		if (mServiceType.getChildCount() != size + 1) {
+			if (size > 0) {
+				for (String type : serviceType) {
+					final TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(
+							R.layout.layout_stylish_record_item_service_type, null, false);
+					tv.setText(type);
 
-				final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-				llp.rightMargin = getResources().getDimensionPixelSize(R.dimen.record_item_gap_between_service_type);
+					final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT);
+					llp.rightMargin = getResources().getDimensionPixelSize(R.dimen.record_item_gap_between_service_type);
 
-				mServiceType.addView(tv, llp);
+					mServiceType.addView(tv, llp);
+				}
 			}
-		}
 
-		// add required time
-		final ViewGroup vg = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_time, null,
-				false);
-		final TextView hour = (TextView) vg.findViewById(R.id.stylish_record_item_service_hour);
-		final String requiredTime;
-		if (record.requiredMinute == 0) {
-			requiredTime = String.format("%d", record.requiredHour);
-		} else {
-			final float time = record.requiredHour + (float) record.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
-			requiredTime = String.format("%.1f", time);
-		}
-		hour.setText(requiredTime);
+			// add required time
+			final ViewGroup vg = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_time,
+					null, false);
+			final TextView hour = (TextView) vg.findViewById(R.id.stylish_record_item_service_hour);
+			final String requiredTime;
+			if (record.requiredMinute == 0) {
+				requiredTime = String.format("%d", record.requiredHour);
+			} else {
+				final float time = record.requiredHour + (float) record.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
+				requiredTime = String.format("%.1f", time);
+			}
+			hour.setText(requiredTime);
 
-		final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		mServiceType.addView(vg, llp);
+			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			mServiceType.addView(vg, llp);
+		}
 
 		// show record information
 		final String information = String.format("%02d:%02d  %s  %s", record.hourOfDay, record.minute, record.name, record.phoneNumber);
 		mRecordInfo.setText(information);
+
+		// set click listener to clear record
+		setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				final StylishBookingActivity activity = getActivity();
+				final boolean show = true;
+				activity.showDetailView(show, record);
+			}
+		});
 	}
 }

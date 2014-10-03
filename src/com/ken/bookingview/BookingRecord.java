@@ -1,13 +1,15 @@
 package com.ken.bookingview;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BookingRecord implements Serializable {
+import android.util.Log;
 
-	private static final long serialVersionUID = 12345678905566L;
+public class BookingRecord {
 
-	final long id; // the same as the database id
+	private static final String TAG = BookingRecord.class.getSimpleName();
+
+	public static final String SEPARATED_STRING = ", ";
+
 	String name;
 	String sex;
 	int year;
@@ -20,9 +22,8 @@ public class BookingRecord implements Serializable {
 	int requiredHour;
 	int requiredMinute;
 
-	public BookingRecord(long id, String name, String sex, int year, int month, int day, int hourOfDay, int minutes, String phoneNumber,
+	public BookingRecord(String name, String sex, int year, int month, int day, int hourOfDay, int minutes, String phoneNumber,
 			ArrayList<String> serviceType, int requiredHour, int requiredMinute) {
-		this.id = id;
 		this.name = name;
 		this.sex = sex;
 		this.year = year;
@@ -36,18 +37,49 @@ public class BookingRecord implements Serializable {
 		this.requiredMinute = requiredMinute;
 	}
 
-	public void setTimeSheetItem(BookingRecord timeSheetItem) {
-		name = timeSheetItem.name;
-		sex = timeSheetItem.sex;
-		year = timeSheetItem.year;
-		month = timeSheetItem.month;
-		day = timeSheetItem.day;
-		hourOfDay = timeSheetItem.hourOfDay;
-		minute = timeSheetItem.minute;
-		phoneNumber = timeSheetItem.phoneNumber;
-		serviceType = timeSheetItem.serviceType;
-		requiredHour = timeSheetItem.requiredHour;
-		requiredMinute = timeSheetItem.requiredMinute;
+	public void updateRecord(BookingRecord updateRecord) {
+		this.name = updateRecord.name;
+		this.sex = updateRecord.sex;
+		this.year = updateRecord.year;
+		this.month = updateRecord.month;
+		this.day = updateRecord.day;
+		this.hourOfDay = updateRecord.hourOfDay;
+		this.minute = updateRecord.minute;
+		this.phoneNumber = updateRecord.phoneNumber;
+		this.serviceType = updateRecord.serviceType;
+		this.requiredHour = updateRecord.requiredHour;
+		this.requiredMinute = updateRecord.requiredMinute;
+	}
+
+	public static String flattenServiceType(ArrayList<String> serviceType) {
+		Log.d(TAG, "[flattenServiceType] service type size: " + serviceType.size());
+		final int serviceTypeSize = serviceType.size();
+		final StringBuilder sb = new StringBuilder("");
+		for (int i = 0; i < serviceTypeSize; ++i) {
+			final String type = serviceType.get(i);
+			// add the separated string ", " if it is first item added into string builder
+			if (!"".equals(sb.toString())) {
+				sb.append(BookingRecord.SEPARATED_STRING);
+			}
+			sb.append(type);
+		}
+		Log.d(TAG, "[flattenServiceType] flatten: " + sb.toString());
+		return sb.toString();
+	}
+
+	public static ArrayList<String> unflattenServiceType(String flatten) {
+		Log.d(TAG, "[unflattenServiceType] flatten: " + flatten);
+		// FIXME
+		final String[] parts = flatten.split(SEPARATED_STRING);
+		Log.d(TAG, "[unflattenServiceType] parts: " + parts);
+		final ArrayList<String> serviceType = new ArrayList<String>();
+		if (parts != null) {
+			for (int i = 0; i < parts.length; ++i) {
+				Log.d(TAG, "[unflattenServiceType] parts[" + i + "]: " + parts[i]);
+				serviceType.add(parts[i]);
+			}
+		}
+		return serviceType;
 	}
 
 	@Override

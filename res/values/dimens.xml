@@ -1,14 +1,11 @@
 <resources>
 
     <!-- record item -->
-    <dimen name="record_item_height">90dp</dimen> <!-- service_item_height * 4 + gap_between_service_item_and_content -->
+    <dimen name="record_item_height">85dp</dimen>
     <dimen name="record_item_identity_width">115dp</dimen>
     <dimen name="record_item_division_width">6dp</dimen>
-    <dimen name="record_item_gap_between_division_and_content">22dp</dimen>
-    <dimen name="record_item_service_type_width">48dp</dimen>
-    <dimen name="record_item_service_type_height">20dp</dimen>
     <dimen name="record_item_gap_between_service_type">7dp</dimen>
-    <dimen name="record_item_gap_between_service_type_and_content">10dp</dimen>
+    <dimen name="record_item_gap_between_service_type_and_content">8dp</dimen>
 
     <!--  -->
     <dimen name="record_item_flag_text_left">385dp</dimen>

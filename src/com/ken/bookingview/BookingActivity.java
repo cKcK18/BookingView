@@ -1,6 +1,5 @@
 package com.ken.bookingview;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import com.ken.bookingview.HorizontalListView.OnSelectedItemChangedListener;
 
 abstract public class BookingActivity extends FragmentActivity implements OnSelectedItemChangedListener {
 
-	@SuppressWarnings("unused")
 	private static final String TAG = BookingActivity.class.getSimpleName();
 
 	protected static final int ACTION_TODAY = 0;
@@ -118,19 +116,6 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 				changeDate(ACTION_TODAY, -1);
 			}
 		}, 500);
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				BookingApplication app = (BookingApplication) getApplicationContext();
-				final long id = app.getBookingProvider().generateNewId();
-				ArrayList<String> serviceType = new ArrayList<String>();
-				serviceType.add("剪髮");
-				serviceType.add("洗髮");
-
-				BookingRecord record = new BookingRecord(id, "ken chen", "male", 2014, 10, 3, 1, 15, "0985091642", serviceType, 2, 30);
-				BookingRecordManager.getInstance().writeBookingRecord(record);
-			}
-		}, 5000);
 	}
 
 	@Override
