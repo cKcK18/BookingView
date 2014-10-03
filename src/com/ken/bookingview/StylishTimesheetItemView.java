@@ -3,8 +3,8 @@ package com.ken.bookingview;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.text.Layout;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -89,11 +89,32 @@ public class StylishTimesheetItemView extends LinearLayout {
 		final int size = serviceType.size();
 		if (size > 0) {
 			for (String type : serviceType) {
-				TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_type, mServiceType,
-						false);
+				final TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_type,
+						null, false);
 				tv.setText(type);
+
+				final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				llp.rightMargin = getResources().getDimensionPixelSize(R.dimen.record_item_gap_between_service_type);
+
+				mServiceType.addView(tv, llp);
 			}
 		}
+
+		// add required time
+		final ViewGroup vg = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_time, null,
+				false);
+		final TextView hour = (TextView) vg.findViewById(R.id.stylish_record_item_service_hour);
+		final String requiredTime;
+		if (record.requiredMinute == 0) {
+			requiredTime = String.format("%d", record.requiredHour);
+		} else {
+			final float time = record.requiredHour + (float) record.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
+			requiredTime = String.format("%.1f", time);
+		}
+		hour.setText(requiredTime);
+
+		final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		mServiceType.addView(vg, llp);
 
 		// show record information
 		final String information = String.format("%02d:%02d  %s  %s", record.hourOfDay, record.minute, record.name, record.phoneNumber);
