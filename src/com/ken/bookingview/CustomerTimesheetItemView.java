@@ -47,7 +47,7 @@ public class CustomerTimesheetItemView extends FrameLayout {
 
 	@Override
 	protected void onFinishInflate() {
-		mHourView = (TextView) findViewById(R.id.customer_booking_item_hour_of_day);
+		mHourView = (TextView) findViewById(R.id.customer_record_item_hour_of_day);
 		mStatusView = (TextView) findViewById(R.id.customer_booking_item_status);
 	}
 

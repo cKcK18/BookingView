@@ -127,10 +127,10 @@ public class BookingRecordManager {
 		}.execute();
 	}
 
-	public void writeBookingRecord(final BookingRecord updateData) {
+	public void writeBookingRecord(final BookingRecord updateRecord) {
 		BookingRecord tempData = null;
 		for (BookingRecord data : mRecordList) {
-			if (isTheSameDate(updateData, data)) {
+			if (isTheSameDate(updateRecord, data)) {
 				tempData = data;
 				break;
 			}
@@ -139,9 +139,9 @@ public class BookingRecordManager {
 		final BookingRecord targerData = tempData;
 		final boolean add = targerData == null;
 		if (add) {
-			mRecordList.add(updateData);
+			mRecordList.add(updateRecord);
 		} else {
-			targerData.setTimeSheetItem(updateData);
+			targerData.setTimeSheetItem(updateRecord);
 		}
 		// write database
 		new AsyncTask<Void, Void, String>() {
@@ -152,9 +152,9 @@ public class BookingRecordManager {
 					final Hashtable<String, String> headers = new Hashtable<String, String>();
 					headers.put("Accept", "application/json");
 					headers.put("Content-Type", "application/json");
-					final String stringBody = getPostBody(updateData.name, updateData.sex, updateData.year, updateData.month,
-							updateData.day, updateData.hourOfDay, updateData.minute, updateData.phoneNumber, updateData.serviceType,
-							updateData.requiredHour, updateData.requiredMinute);
+					final String stringBody = getPostBody(updateRecord.name, updateRecord.sex, updateRecord.year, updateRecord.month,
+							updateRecord.day, updateRecord.hourOfDay, updateRecord.minute, updateRecord.phoneNumber, updateRecord.serviceType,
+							updateRecord.requiredHour, updateRecord.requiredMinute);
 					String response = restClient.post(SERVER_RECORD_URL, stringBody, headers);
 					return response;
 				} catch (Exception e) {

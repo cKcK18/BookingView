@@ -32,7 +32,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 		final BookingRecordManager manager = BookingRecordManager.getInstance();
 		mRecordList = manager.getRecordListByDate(year, month, day);
 
-		mRecordItemHeight = context.getResources().getDimensionPixelSize(R.dimen.booking_item_height);
+		mRecordItemHeight = context.getResources().getDimensionPixelSize(R.dimen.record_item_height);
 	}
 
 	@Override
@@ -60,6 +60,10 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 		mRecordList = BookingRecordManager.getInstance().getRecordListByDate(mYear, mMonth, mDay);
 	}
 
+	protected boolean ignoreRequiredTime() {
+		return true;
+	}
+
 	protected final BookingRecord getAvailableRecord(int position) {
 		// transform position into specific time
 		final int unitMinutes = DateUtilities.A_DAY_IN_MINUTE / mMaxSize;
@@ -75,8 +79,15 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 
 			Calendar end = Calendar.getInstance();
 			end.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
-			end.add(Calendar.HOUR_OF_DAY, record.requiredHour);
-			end.add(Calendar.MINUTE, record.requiredMinute);
+			if (ignoreRequiredTime()) {
+				final int unitHour = unitMinutes / DateUtilities.A_HOUR_IN_MINUTE;
+				final int unitMinute = unitMinutes % DateUtilities.A_HOUR_IN_MINUTE;
+				end.add(Calendar.HOUR_OF_DAY, unitHour);
+				end.add(Calendar.MINUTE, unitMinute);
+			} else {
+				end.add(Calendar.HOUR_OF_DAY, record.requiredHour);
+				end.add(Calendar.MINUTE, record.requiredMinute);
+			}
 
 			Calendar target = Calendar.getInstance();
 			target.set(mYear, mMonth, mDay, hour, minute, 0);

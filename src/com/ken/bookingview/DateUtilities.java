@@ -141,8 +141,10 @@ public class DateUtilities {
 	}
 
 	public static synchronized boolean within(Calendar start, Calendar end, Calendar target) {
-		Log.d("kenchen", String.format("[within] start: %s\nend: %s\n, target: %s", start, end, target));
-		Log.d("kenchen", String.format("[within] within: %b", start.before(target) && end.after(target)));
-		return start.before(target) && end.after(target);
+		final boolean within = start.before(target) && end.after(target);
+		if (within) {
+			Log.d("kenchen", String.format("[within] start: %s\nend: %s\n, target: %s", start, end, target));
+		}
+		return within;
 	}
 }

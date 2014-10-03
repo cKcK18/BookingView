@@ -1,0 +1,15 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/stylish_record_item_service_type"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#6063A8"
+    android:gravity="center"
+    android:paddingBottom="3dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="3dp"
+    android:textColor="@android:color/white"
+    android:textSize="13sp" >
+
+</TextView>

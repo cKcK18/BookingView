@@ -1,5 +1,6 @@
 package com.ken.bookingview;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.os.Bundle;
@@ -38,6 +39,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	protected final Handler mHandler = new Handler();
 
 	abstract protected int getLayoutResource();
+
 	abstract protected Class<? extends TimesheetAdapter> getTimesheetAdapterClass();
 
 	@Override
@@ -115,7 +117,20 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 			public void run() {
 				changeDate(ACTION_TODAY, -1);
 			}
-		}, 1000);
+		}, 500);
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				BookingApplication app = (BookingApplication) getApplicationContext();
+				final long id = app.getBookingProvider().generateNewId();
+				ArrayList<String> serviceType = new ArrayList<String>();
+				serviceType.add("剪髮");
+				serviceType.add("洗髮");
+
+				BookingRecord record = new BookingRecord(id, "ken chen", "male", 2014, 10, 3, 1, 15, "0985091642", serviceType, 2, 30);
+				BookingRecordManager.getInstance().writeBookingRecord(record);
+			}
+		}, 5000);
 	}
 
 	@Override
@@ -133,12 +148,11 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	}
 
 	protected final void changeDate(int action, int dateIndex) {
-		Log.d("kenchen", String.format("[changeDate] action: %d, date: %b, pager: %b, index: %d/%d", action, mDateListViewChanged,
-				mPagerChanged, mLastDateIndex, dateIndex));
+		Log.d(TAG, String.format("[changeDate] action: %d, date: %b, pager: %b, index: %d/%d", action, mDateListViewChanged, mPagerChanged,
+				mLastDateIndex, dateIndex));
 		if (mDateListViewChanged && mPagerChanged && mLastDateIndex == dateIndex) {
 			return;
 		}
-		Log.d("kenchen", String.format("[changeDate] pass !!"));
 
 		final Calendar calendar;
 		switch (action) {
@@ -156,11 +170,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 		}
 		case ACTION_LEFT_ARROW: {
 			calendar = DateUtilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(-1);
-			Log.d("kenchen",
-					String.format("[LEFT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-							calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
-			Log.d("kenchen", String.format("[LEFT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
 
 			mDateListViewChanged = mPagerChanged = true;
@@ -172,10 +182,7 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 		}
 		case ACTION_RIGHT_ARROW: {
 			calendar = DateUtilities.getCalendarWithOffsetOfMonthRelativeToPickedDate(1);
-			Log.d("kenchen", String.format("[RIGHT] picked date: %04d/%02d/%02d", calendar.get(Calendar.YEAR),
-					calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE)));
 			final int actualIndex = dateIndex == -1 ? DateUtilities.getIndexByCalendar(calendar) : dateIndex;
-			Log.d("kenchen", String.format("[RIGHT] index: %d", actualIndex));
 			mMonthView.setText(getStringWithYearAndMonth(calendar));
 
 			mDateListViewChanged = mPagerChanged = true;
@@ -213,8 +220,6 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 		mDateListViewChanged = mPagerChanged = false;
 		mLastDateIndex = -100;
 		final Calendar debug = calendar;
-		Log.d("kenchen",
-				String.format("picked date: %04d/%02d/%02d", debug.get(Calendar.YEAR), debug.get(Calendar.MONTH), debug.get(Calendar.DATE)));
 		DateUtilities.sPickedDate = calendar;
 	}
 }

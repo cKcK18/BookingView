@@ -7,7 +7,7 @@
     android:paddingRight="18dp" >
 
     <TextView
-        android:id="@+id/customer_booking_item_hour_of_day"
+        android:id="@+id/customer_record_item_hour_of_day"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="left"

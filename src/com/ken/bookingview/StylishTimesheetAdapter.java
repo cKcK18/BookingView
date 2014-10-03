@@ -2,6 +2,7 @@ package com.ken.bookingview;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
@@ -20,7 +21,7 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 
 		// reuse or create view
 		if (convertView == null) {
-			convertView = new StylishTimesheetItemView(mContext);
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_stylish_record_item_view, null, false);
 			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mRecordItemHeight));
 			convertView.setTag(R.id.booking_item_count, mMaxSize);
 		}
