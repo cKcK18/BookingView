@@ -43,6 +43,15 @@ public class BookingRecordManager {
 		readBookingRecord();
 	}
 
+	private boolean isExist(BookingRecord targetRecord) {
+		for (BookingRecord record : mRecordList) {
+			if (isTheSameDate(targetRecord, record)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void readBookingRecord() {
 		new AsyncTask<Void, Void, ArrayList<BookingRecord>>() {
 			@Override
@@ -88,21 +97,48 @@ public class BookingRecordManager {
 		}.execute();
 	}
 
-	public void writeBookingRecord(final BookingRecord updateRecord) {
-		BookingRecord tempData = null;
-		for (BookingRecord data : mRecordList) {
-			if (isTheSameDate(updateRecord, data)) {
-				tempData = data;
-				break;
-			}
+	public void addBookingRecord(final BookingRecord newRecord) {
+		final boolean exist = isExist(newRecord);
+		if (exist) {
+			return;
 		}
-		// update or add in memory
-		final BookingRecord targerData = tempData;
-		final boolean add = targerData == null;
-		if (add) {
-			mRecordList.add(updateRecord);
-		} else {
-			targerData.updateRecord(updateRecord);
+		// add in memory
+		mRecordList.add(newRecord);
+
+		// write database
+		new AsyncTask<Void, Void, String>() {
+			@Override
+			protected String doInBackground(Void... params) {
+				RestClient restClient = new RestClient();
+				try {
+					final Hashtable<String, String> headers = new Hashtable<String, String>();
+					headers.put("Accept", "application/json");
+					headers.put("Content-Type", "application/json");
+					final String stringBody = getPostBody(newRecord.name, newRecord.sex, newRecord.year, newRecord.month, newRecord.day,
+							newRecord.hourOfDay, newRecord.minute, newRecord.phoneNumber, newRecord.serviceType, newRecord.requiredHour,
+							newRecord.requiredMinute);
+					String response = restClient.post(SERVER_ADD_URL, stringBody, headers);
+					return response;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(String result) {
+				Log.d(TAG, String.format("[addBookingRecord] dataList: %d", mRecordList.size()));
+				for (OnRecordChangedListener listener : mOnRecordChangedListener) {
+					listener.onRecordChanged();
+				}
+			}
+		}.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+	}
+
+	public void updateBookingRecord(final BookingRecord updateRecord) {
+		final boolean exist = isExist(updateRecord);
+		if (!exist) {
+			return;
 		}
 		// write database
 		new AsyncTask<Void, Void, String>() {
@@ -116,8 +152,7 @@ public class BookingRecordManager {
 					final String stringBody = getPostBody(updateRecord.name, updateRecord.sex, updateRecord.year, updateRecord.month,
 							updateRecord.day, updateRecord.hourOfDay, updateRecord.minute, updateRecord.phoneNumber,
 							updateRecord.serviceType, updateRecord.requiredHour, updateRecord.requiredMinute);
-					final String url = add ? SERVER_ADD_URL : SERVER_UPDATE_URL;
-					String response = restClient.post(url, stringBody, headers);
+					String response = restClient.post(SERVER_UPDATE_URL, stringBody, headers);
 					return response;
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -127,7 +162,7 @@ public class BookingRecordManager {
 
 			@Override
 			protected void onPostExecute(String result) {
-				Log.d(TAG, String.format("[writeBookingRecord] add: %b, dataList: %d", add, mRecordList.size()));
+				Log.d(TAG, String.format("[updateBookingRecord] dataList: %d", mRecordList.size()));
 				for (OnRecordChangedListener listener : mOnRecordChangedListener) {
 					listener.onRecordChanged();
 				}

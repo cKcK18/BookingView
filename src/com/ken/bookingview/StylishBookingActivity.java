@@ -2,6 +2,7 @@ package com.ken.bookingview;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,7 +42,9 @@ public class StylishBookingActivity extends BookingActivity {
 		backButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				finish();
+				// finish();
+				Intent intent = new Intent(StylishBookingActivity.this, CustomerBookingActivity.class);
+				startActivity(intent);
 			}
 		});
 
