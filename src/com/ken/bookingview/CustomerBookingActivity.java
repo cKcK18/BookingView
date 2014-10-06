@@ -26,6 +26,11 @@ public class CustomerBookingActivity extends BookingActivity {
 	}
 
 	@Override
+	protected FormController initializeFormController() {
+		return null;
+	}
+
+	@Override
 	protected void setUpView() {
 		final TextView stylishName = (TextView) findViewById(R.id.custommer_booking_stylish_name);
 		stylishName.setText("H-Park hair salon, Sophia");

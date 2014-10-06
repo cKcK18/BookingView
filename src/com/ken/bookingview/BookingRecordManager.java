@@ -59,10 +59,16 @@ public class BookingRecordManager {
 				final ArrayList<BookingRecord> recordList = new ArrayList<BookingRecord>();
 
 				ArrayList<String> serviceType = new ArrayList<String>();
-				serviceType.add("�žv");
-				serviceType.add("�~�v");
+				serviceType.add("洗髮");
+				serviceType.add("剪髮");
 
-				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 10, 3, 1, 15, "0985091642", serviceType, 2, 30);
+				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 10, 7, 1, 15, "0985091642", serviceType, 2, 30);
+				recordList.add(record);
+
+				serviceType = new ArrayList<String>();
+				serviceType.add("燙髮");
+
+				record = new BookingRecord("winnie hsu", "female", 2014, 10, 6, 2, 15, "0985091242", serviceType, 3, 00);
 				recordList.add(record);
 
 				// Log.d(TAG, "[read] serviceItems: " + serviceItems);

@@ -2,8 +2,6 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
-import android.util.Log;
-
 public class DateUtilities {
 
 	/*
@@ -141,10 +139,6 @@ public class DateUtilities {
 	}
 
 	public static synchronized boolean within(Calendar start, Calendar end, Calendar target) {
-		final boolean within = start.before(target) && end.after(target);
-		if (within) {
-			Log.d("kenchen", String.format("[within] start: %s\nend: %s\n, target: %s", start, end, target));
-		}
-		return within;
+		return start.before(target) && end.after(target);
 	}
 }

@@ -80,11 +80,11 @@
         android:visibility="gone" />
 
     <include
-        android:id="@+id/stylish_booking_detail_view"
+        android:id="@+id/stylish_booking_form_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        layout="@layout/layout_stylish_record_detail_view"
+        layout="@layout/layout_stylish_record_form_view"
         android:visibility="gone" />
 
 </FrameLayout>
