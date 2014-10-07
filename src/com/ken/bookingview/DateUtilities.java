@@ -138,7 +138,7 @@ public class DateUtilities {
 		return dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY;
 	}
 
-	public static synchronized boolean within(Calendar start, Calendar end, Calendar target) {
-		return start.before(target) && end.after(target);
+	public static synchronized boolean within(Calendar start, Calendar end, Calendar targetStart, Calendar targetEnd) {
+		return (start.before(targetStart) && end.after(targetStart)) || (start.before(targetEnd) && end.after(targetEnd));
 	}
 }

@@ -1,7 +1,7 @@
 package com.ken.bookingview;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -81,6 +81,7 @@ public class StylishTimesheetItemView extends LinearLayout {
 		}
 	}
 
+	@SuppressLint("InflateParams")
 	private void proceedRecord() {
 		final Object object = getTag(R.id.booking_item_info);
 		// check that any record in the time

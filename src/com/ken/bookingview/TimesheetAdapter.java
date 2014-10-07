@@ -76,7 +76,8 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 		for (BookingRecord record : mRecordList) {
 			Calendar start = Calendar.getInstance();
 			Calendar end = Calendar.getInstance();
-			Calendar target = Calendar.getInstance();
+			Calendar targetStart = Calendar.getInstance();
+			Calendar targetEnd = Calendar.getInstance();
 			if (ignoreRequiredTime()) {
 				start.set(mYear, mMonth, mDay, hour, minute, 0);
 
@@ -84,7 +85,7 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 				end.add(Calendar.HOUR_OF_DAY, unitMinutes / DateUtilities.A_HOUR_IN_MINUTE);
 				end.add(Calendar.MINUTE, unitMinutes % DateUtilities.A_HOUR_IN_MINUTE);
 
-				target.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
+				targetStart.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
 			} else {
 				start.set(mYear, mMonth, mDay, record.hourOfDay, record.minute, 0);
 
@@ -92,10 +93,12 @@ public abstract class TimesheetAdapter extends BaseAdapter implements OnRecordCh
 				end.add(Calendar.HOUR_OF_DAY, record.requiredHour);
 				end.add(Calendar.MINUTE, record.requiredMinute);
 
-				target.set(mYear, mMonth, mDay, hour, minute, 0);
+				targetStart.set(mYear, mMonth, mDay, hour, minute, 0);
+
+				targetEnd.set(mYear, mMonth, mDay, hour, minute + unitMinutes - 1, 0);
 			}
 
-			if (DateUtilities.within(start, end, target)) {
+			if (DateUtilities.within(start, end, targetStart, targetEnd)) {
 				timeSheetItem = record;
 				break;
 			}
