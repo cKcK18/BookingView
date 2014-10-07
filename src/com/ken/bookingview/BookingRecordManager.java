@@ -59,36 +59,22 @@ public class BookingRecordManager {
 				final ArrayList<BookingRecord> recordList = new ArrayList<BookingRecord>();
 
 				ArrayList<String> serviceType = new ArrayList<String>();
-				serviceType.add("洗髮");
-				serviceType.add("剪髮");
+				serviceType.add("Long Hair");
+				serviceType.add("Short Hair");
 
 				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 10, 7, 1, 15, "0985091642", serviceType, 2, 30);
 				recordList.add(record);
 
 				serviceType = new ArrayList<String>();
-				serviceType.add("燙髮");
+				serviceType.add("Dye");
+				serviceType.add("Perm");
 
 				record = new BookingRecord("winnie hsu", "female", 2014, 10, 6, 2, 15, "0985091242", serviceType, 3, 00);
 				recordList.add(record);
 
-				// Log.d(TAG, "[read] serviceItems: " + serviceItems);
-				// // FIXME
-				// final String[] parts = serviceItems.split(SEPARATED_STRING);
-				// Log.d(TAG, "[read] parts: " + parts);
-				// final ArrayList<String> serviceItemList = new ArrayList<String>();
-				// if (parts != null) {
-				// for (int i = 0; i < parts.length; ++i) {
-				// Log.d(TAG, "[read] parts[" + i + "]: " + parts[i]);
-				// serviceItemList.add(parts[i]);
-				// }
-				// }
-				// Log.d(TAG, "[read] serviceItemsList: " + serviceItemList.size());
-				// final int requiredHour = cursor.getInt(requiredHourIndex);
-				// final int requiredMinute = cursor.getInt(requiredMinuteIndex);
-				//
-				// final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, serviceItemList,
-				// requiredHour, requiredMinute);
-				// recordList.add(data);
+//				final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, serviceItemList,
+//						requiredHour, requiredMinute);
+//				recordList.add(data);
 				return recordList;
 			}
 

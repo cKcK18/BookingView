@@ -137,7 +137,7 @@ public class StylishTimesheetItemView extends LinearLayout {
 			public void onClick(View v) {
 				final StylishBookingActivity activity = getActivity();
 				final boolean show = true;
-				activity.showFormView(show, record);
+				activity.animateForm(show, record);
 			}
 		});
 	}

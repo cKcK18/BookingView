@@ -23,47 +23,6 @@ public class EditableFormController extends FormController {
 	}
 
 	@Override
-	public int initilizeYear() {
-		return mReferenceRecord.year;
-	}
-
-	@Override
-	public int initilizeMonth() {
-		return mReferenceRecord.month - 1;
-	}
-
-	@Override
-	public int initilizeDay() {
-		return mReferenceRecord.day;
-	}
-
-	@Override
-	public int initilizeHour() {
-		return mReferenceRecord.hourOfDay;
-	}
-
-	@Override
-	public int initilizeMinute() {
-		return mReferenceRecord.minute;
-	}
-
-	@Override
-	public void initializeServiceType(String[] serviceList, boolean[] checked, boolean[] unconfirmed) {
-		final ArrayList<String> serviceType = mReferenceRecord.serviceType;
-		for (int i = 0; i < serviceList.length; ++i) {
-			boolean check = false;
-			for (int j = 0; j < serviceType.size(); ++j) {
-				if (serviceList[i].equals(serviceType.get(j))) {
-					mServiceType.add(serviceList[i]);
-					check = true;
-					break;
-				}
-			}
-			checked[i] = unconfirmed[i] = check;
-		}
-	}
-
-	@Override
 	public void initailizeForm() {
 		final Resources res = mFormView.getResources();
 
@@ -102,8 +61,57 @@ public class EditableFormController extends FormController {
 	}
 
 	@Override
-	void writeBookingRecord(BookingRecord record) {
-		BookingRecordManager.getInstance().updateBookingRecord(record);
+	public int initilizeYear() {
+		return mReferenceRecord.year;
+	}
+
+	@Override
+	public int initilizeMonth() {
+		return mReferenceRecord.month;
+	}
+
+	@Override
+	public int initilizeDay() {
+		return mReferenceRecord.day;
+	}
+
+	@Override
+	public int initilizeHour() {
+		return mReferenceRecord.hourOfDay;
+	}
+
+	@Override
+	public int initilizeMinute() {
+		return mReferenceRecord.minute;
+	}
+
+	@Override
+	protected void initializeServiceType(String[] availableServices, ArrayList<String> chooseServiceType) {
+		final ArrayList<String> referenceServiceType = mReferenceRecord.serviceType;
+		for (int i = 0; i < availableServices.length; ++i) {
+			for (int j = 0; j < referenceServiceType.size(); ++j) {
+				if (availableServices[i].equals(referenceServiceType.get(j))) {
+					chooseServiceType.add(availableServices[i]);
+					break;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void writeBookingRecord(BookingRecord record) {
+		mReferenceRecord.updateRecord(record);
+		BookingRecordManager.getInstance().updateBookingRecord(mReferenceRecord);
+	}
+
+	@Override
+	public void animateForm(boolean show) {
+		getActivity().animateForm(show, mReferenceRecord);
+	}
+
+	@Override
+	public String completedString() {
+		return "edit completed";
 	}
 
 	private String getDateString(BookingRecord referenceRecord) {
@@ -122,10 +130,9 @@ public class EditableFormController extends FormController {
 	}
 
 	private void deleteRecord(BookingRecord deleteRecord) {
-		final StylishBookingActivity activity = getActivity();
-		final boolean show = false;
-		activity.showFormView(show);
-
 		BookingRecordManager.getInstance().deleteBookingRecord(deleteRecord);
+
+		final boolean show = false;
+		getActivity().animateForm(show);
 	}
 }

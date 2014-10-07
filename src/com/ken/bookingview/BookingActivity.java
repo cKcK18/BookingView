@@ -2,19 +2,14 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -37,8 +32,6 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	protected TextView mMonthView;
 	protected HorizontalListView mDateListView;
 	protected ViewPager mPager;
-	private View mOverlayView;
-	private BookingFormView mFormView;
 
 	protected State mState = State.CALENDAR;
 
@@ -101,19 +94,6 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 				changeDate(ACTION_PAGER, dateIndex);
 			}
 		});
-
-		mOverlayView = (View) findViewById(R.id.stylish_booking_overlay);
-		mOverlayView.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return true;
-			}
-		});
-
-		// Instantiate a booking form view.
-		final int tranY = getResources().getDisplayMetrics().heightPixels;
-		mFormView = (BookingFormView) findViewById(R.id.stylish_booking_form_view);
-		mFormView.setTranslationY(tranY);
 	}
 
 	protected final void performDateToBeChanged(int action) {
@@ -240,54 +220,16 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	public void onBackPressed() {
 		if (mState == State.FORM_VIEW) {
 			final boolean show = false;
-			showFormView(show);
+			animateForm(show);
 		} else {
 			super.onBackPressed();
 		}
 	}
 
-	public void showFormView(boolean show) {
-		showFormView(show, null);
+	public final void animateForm(boolean show) {
+		animateForm(show, null);
 	}
 
-	public void showFormView(boolean show, BookingRecord updateRecord) {
-		if (show) {
-			mState = State.FORM_VIEW;
-		} else {
-			mState = State.CALENDAR;
-		}
-		final FormController controller;
-		if (updateRecord != null) {
-			controller = new EditableFormController(mFormView);
-			((EditableFormController) controller).setReferenceRecord(updateRecord);
-		} else {
-			controller = new NewFormController(mFormView);
-		}
-		mFormView.setController(controller);
-		mFormView.show(show);
-
-		overlay(show);
-	}
-
-	private void overlay(final boolean show) {
-		final float alpha = show ? 0.5f : 0.0f;
-
-		mOverlayView.animate().alpha(alpha).setDuration(300).setInterpolator(new DecelerateInterpolator())
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationStart(Animator animation) {
-						if (show) {
-							mOverlayView.setVisibility(View.VISIBLE);
-						}
-					}
-
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						if (!show) {
-							mOverlayView.setVisibility(View.GONE);
-						}
-						mOverlayView.setAlpha(alpha);
-					}
-				}).start();
+	protected void animateForm(boolean show, BookingRecord updateRecord) {
 	}
 }

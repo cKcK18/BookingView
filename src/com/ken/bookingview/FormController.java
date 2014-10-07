@@ -22,8 +22,6 @@ public abstract class FormController {
 	protected TextView mRequiredTime;
 	protected Button mDeleteButton;
 
-	protected ArrayList<String> mServiceType;
-
 	public FormController(ViewGroup formView) {
 		mFormView = formView;
 		mTitleText = (TextView) formView.findViewById(R.id.stylish_booking_form_title);
@@ -34,8 +32,6 @@ public abstract class FormController {
 		mServiceTypeText = (TextView) formView.findViewById(R.id.stylish_booking_form_service_type);
 		mRequiredTime = (TextView) formView.findViewById(R.id.stylish_booking_form_required_time);
 		mDeleteButton = (Button) formView.findViewById(R.id.stylish_booking_form_delete);
-
-		mServiceType = new ArrayList<String>();
 	}
 
 	public Calendar initilizeBookingDate() {
@@ -43,6 +39,15 @@ public abstract class FormController {
 		calendar.set(initilizeYear(), initilizeMonth(), initilizeDay(), initilizeHour(), initilizeMinute());
 		return calendar;
 	}
+
+	public ArrayList<String> initilizeServiceType() {
+		final String[] availableServices = mFormView.getResources().getStringArray(R.array.service_arrays);
+		final ArrayList<String> chooseServiceType = new ArrayList<String>();
+		initializeServiceType(availableServices, chooseServiceType);
+		return chooseServiceType;
+	}
+
+	abstract void initailizeForm();
 
 	abstract int initilizeYear();
 
@@ -54,20 +59,13 @@ public abstract class FormController {
 
 	abstract int initilizeMinute();
 
-	abstract void initializeServiceType(String[] allServices, boolean[] checked, boolean[] unconfirmed);
-
-	public void setServiceType(ArrayList<String> results) {
-		if (results != null) {
-			mServiceType.clear();
-			mServiceType = results;
-		} else {
-			mServiceType = new ArrayList<String>();
-		}
-	}
-
-	abstract void initailizeForm();
+	protected abstract void initializeServiceType(String[] availableServices, ArrayList<String> chooseServiceType);
 
 	abstract void writeBookingRecord(BookingRecord record);
+
+	abstract void animateForm(boolean show);
+
+	abstract String completedString();
 
 	protected final StylishBookingActivity getActivity() {
 		if (mFormView.getContext() instanceof StylishBookingActivity) {

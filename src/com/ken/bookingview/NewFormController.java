@@ -1,5 +1,6 @@
 package com.ken.bookingview;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.res.Resources;
@@ -10,6 +11,28 @@ public class NewFormController extends FormController {
 
 	public NewFormController(ViewGroup formView) {
 		super(formView);
+	}
+
+	@Override
+	public void initailizeForm() {
+		final Resources res = mFormView.getResources();
+		final String choiceString = res.getString(R.string.booking_form_choice);
+
+		mTitleText.setText(res.getString(R.string.booking_form_add_title));
+
+		mEditName.setText(null);
+		mEditName.requestFocus();
+
+		mSexSpinner.setSelection(0);
+
+		mDateText.setText(choiceString);
+
+		mEditPhoneNumber.setText(null);
+
+		mServiceTypeText.setText(choiceString);
+
+		mDeleteButton.setVisibility(View.GONE);
+		mDeleteButton.setOnClickListener(null);
 	}
 
 	@Override
@@ -38,45 +61,29 @@ public class NewFormController extends FormController {
 	}
 
 	@Override
-	public void initializeServiceType(String[] serviceList, boolean[] checked, boolean[] unconfirmed) {
+	protected void initializeServiceType(String[] availableServices, ArrayList<String> chooseServiceType) {
 		// reset the last checked item
-		for (int i = 0; i < serviceList.length; ++i) {
-			boolean check = false;
-			for (int j = 0; j < mServiceType.size(); ++j) {
-				if (serviceList[i].equals(mServiceType.get(j))) {
-					check = true;
+		for (int i = 0; i < availableServices.length; ++i) {
+			for (int j = 0; j < chooseServiceType.size(); ++j) {
+				if (availableServices[i].equals(chooseServiceType.get(j))) {
 					break;
 				}
 			}
-			checked[i] = unconfirmed[i] = check;
 		}
 	}
 
 	@Override
-	public void initailizeForm() {
-		final Resources res = mFormView.getResources();
-		final String choiceString = res.getString(R.string.booking_form_choice);
-
-		mTitleText.setText(res.getString(R.string.booking_form_add_title));
-
-		mEditName.setText(null);
-		mEditName.requestFocus();
-
-		mSexSpinner.setSelection(0);
-
-		mDateText.setText(choiceString);
-
-		mEditPhoneNumber.setText(null);
-
-		mServiceType.clear();
-		mServiceTypeText.setText(choiceString);
-
-		mDeleteButton.setVisibility(View.GONE);
-		mDeleteButton.setOnClickListener(null);
+	public void writeBookingRecord(BookingRecord record) {
+		BookingRecordManager.getInstance().addBookingRecord(record);
 	}
 
 	@Override
-	void writeBookingRecord(BookingRecord record) {
-		BookingRecordManager.getInstance().addBookingRecord(record);
+	public void animateForm(boolean show) {
+		getActivity().animateForm(show, null);
+	}
+
+	@Override
+	public String completedString() {
+		return "add completed";
 	}
 }

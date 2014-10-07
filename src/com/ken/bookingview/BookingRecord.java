@@ -71,14 +71,13 @@ public class BookingRecord {
 		Log.d(TAG, "[unflattenServiceType] flatten: " + flatten);
 		// FIXME
 		final String[] parts = flatten.split(SEPARATED_STRING);
-		Log.d(TAG, "[unflattenServiceType] parts: " + parts);
 		final ArrayList<String> serviceType = new ArrayList<String>();
 		if (parts != null) {
 			for (int i = 0; i < parts.length; ++i) {
-				Log.d(TAG, "[unflattenServiceType] parts[" + i + "]: " + parts[i]);
 				serviceType.add(parts[i]);
 			}
 		}
+		Log.d(TAG, "[unflattenServiceType] service type size: " + serviceType.size());
 		return serviceType;
 	}
 
@@ -86,7 +85,7 @@ public class BookingRecord {
 	public String toString() {
 		return String.format(
 				"hash: %d, name: %s, sex: %s, date: %04d/%02d/%02d %02d:%02d, phoneNumber: %s, services: %s, requiredTime: %2d:%02d",
-				hashCode(), name, sex, year, month, day, hourOfDay, minute, phoneNumber, serviceType.toArray().toString(), requiredHour,
+				hashCode(), name, sex, year, month, day, hourOfDay, minute, phoneNumber, flattenServiceType(serviceType), requiredHour,
 				requiredMinute);
 	}
 }

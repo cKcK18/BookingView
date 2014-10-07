@@ -16,10 +16,8 @@ import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -28,7 +26,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -72,6 +69,8 @@ public class BookingFormView extends LinearLayout {
 	public void setController(FormController controller) {
 		mFormController = controller;
 		mBookingDate = mFormController.initilizeBookingDate();
+		mServiceType.clear();
+		mServiceType = mFormController.initilizeServiceType();
 	}
 
 	@Override
@@ -79,18 +78,6 @@ public class BookingFormView extends LinearLayout {
 		mTitleText = (TextView) findViewById(R.id.stylish_booking_form_title);
 
 		mEditName = (EditText) findViewById(R.id.stylish_booking_form_edit_name);
-		mEditName.setOnEditorActionListener(new OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				// not work
-				if (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-					InputMethodManager in = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-					in.hideSoftInputFromWindow(getWindowToken(), 0);
-					return true;
-				}
-				return false;
-			}
-		});
 
 		final String[] sexList = getResources().getStringArray(R.array.sex_array);
 		mSexSpinner = (Spinner) findViewById(R.id.stylish_booking_form_sex_spinner);
@@ -193,9 +180,10 @@ public class BookingFormView extends LinearLayout {
 					postDelayed(new Runnable() {
 						@Override
 						public void run() {
+							Log.d("kenchen", "[onClick] controller: " + mFormController);
+							Toast.makeText(BookingFormView.this.getContext(), mFormController.completedString(), Toast.LENGTH_SHORT).show();
 							final boolean show = false;
-							activity.showFormView(show);
-							Toast.makeText(BookingFormView.this.getContext(), "add completed", Toast.LENGTH_SHORT).show();
+							mFormController.animateForm(show);
 						}
 					}, 500);
 				}
@@ -209,7 +197,7 @@ public class BookingFormView extends LinearLayout {
 				final boolean show = false;
 				final StylishBookingActivity activity = getActivity();
 				if (activity != null) {
-					activity.showFormView(show);
+					activity.animateForm(show);
 				}
 			}
 		});
@@ -258,7 +246,7 @@ public class BookingFormView extends LinearLayout {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the updated record or the current date as the default date in the picker
 			final int year = mFormController.initilizeYear();
-			final int month = mFormController.initilizeMonth();
+			final int month = mFormController.initilizeMonth() - 1;
 			final int day = mFormController.initilizeDay();
 
 			// Create a new instance of DatePickerDialog and return it
@@ -335,8 +323,7 @@ public class BookingFormView extends LinearLayout {
 				final int month = calendar.get(Calendar.MONTH) + 1;
 				final int day = calendar.get(Calendar.DATE);
 
-				mBookingDate = Calendar.getInstance();
-				mBookingDate.set(year, month, day, hourOfDay, minute);
+				mBookingDate.set(year, month, day, hourOfDay, minute, 0);
 
 				final String string = getDateString(mBookingDate);
 				mDateText.setText(string);
@@ -349,7 +336,7 @@ public class BookingFormView extends LinearLayout {
 
 	private class ServicePickerFragment extends DialogFragment {
 
-		private String[] allServices;
+		private String[] availableService;
 		private boolean[] checkedItems;
 		private boolean[] unconfirmedCheckedItems;
 
@@ -357,18 +344,28 @@ public class BookingFormView extends LinearLayout {
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 
-			allServices = getResources().getStringArray(R.array.service_arrays);
-			checkedItems = new boolean[allServices.length];
-			unconfirmedCheckedItems = new boolean[allServices.length];
+			availableService = getResources().getStringArray(R.array.service_arrays);
+			checkedItems = new boolean[availableService.length];
+			unconfirmedCheckedItems = new boolean[availableService.length];
 
-			mFormController.initializeServiceType(allServices, checkedItems, unconfirmedCheckedItems);
+			// set the last checked item
+			for (int i = 0; i < availableService.length; ++i) {
+				boolean checked = false;
+				for (int j = 0; j < mServiceType.size(); ++j) {
+					if (availableService[i].equals(mServiceType.get(j))) {
+						checked = true;
+						break;
+					}
+				}
+				checkedItems[i] = unconfirmedCheckedItems[i] = checked;
+			}
 		}
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(R.string.booking_form_service_item);
-			builder.setMultiChoiceItems(allServices, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+			builder.setMultiChoiceItems(availableService, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
 				public void onClick(DialogInterface dialog, int item, boolean isChecked) {
 					unconfirmedCheckedItems[item] = isChecked;
 				}
@@ -385,7 +382,7 @@ public class BookingFormView extends LinearLayout {
 						if (!unconfirmedCheckedItems[i]) {
 							continue;
 						}
-						final String item = allServices[i];
+						final String item = availableService[i];
 						// add the separated string ", " if it is first item added into string builder
 						if (!"".equals(sb.toString())) {
 							sb.append(BookingRecord.SEPARATED_STRING);
@@ -393,7 +390,6 @@ public class BookingFormView extends LinearLayout {
 						sb.append(item);
 						mServiceType.add(item);
 					}
-					mFormController.setServiceType(mServiceType);
 					mServiceTypeText.setText(sb.toString());
 				}
 			});

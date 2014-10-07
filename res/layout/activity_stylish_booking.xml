@@ -76,6 +76,7 @@
         android:id="@+id/stylish_booking_overlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:alpha="0"
         android:background="#C0000000"
         android:visibility="gone" />
 

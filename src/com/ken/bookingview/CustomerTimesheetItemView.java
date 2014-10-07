@@ -88,7 +88,7 @@ public class CustomerTimesheetItemView extends FrameLayout {
 			return;
 		}
 		final Object object = getTag(R.id.booking_item_info);
-		// check that any record in the time
+		// check that any record in this time
 		final boolean hasRecord = object != null;
 		final BookingRecord record = hasRecord ? (BookingRecord) object : null;
 		final boolean newRecord = mRecord == null && record != null;
