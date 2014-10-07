@@ -84,8 +84,8 @@ public class StylishTimesheetItemView extends LinearLayout {
 	private void proceedRecord() {
 		final Object object = getTag(R.id.booking_item_info);
 		// check that any record in the time
+		mServiceType.removeAllViews();
 		if (object == null) {
-			mServiceType.removeAllViews();
 			mRecordInfo.setText(null);
 			setOnClickListener(null);
 			return;
@@ -94,38 +94,35 @@ public class StylishTimesheetItemView extends LinearLayout {
 
 		// add service type
 		final ArrayList<String> serviceType = record.serviceType;
-		final int size = serviceType.size();
-		if (mServiceType.getChildCount() != size + 1) {
-			if (size > 0) {
-				for (String type : serviceType) {
-					final TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(
-							R.layout.layout_stylish_record_item_service_type, null, false);
-					tv.setText(type);
-
-					final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
-							LayoutParams.WRAP_CONTENT);
-					llp.rightMargin = getResources().getDimensionPixelSize(R.dimen.record_item_gap_between_service_type);
-
-					mServiceType.addView(tv, llp);
-				}
+		for (String type : serviceType) {
+			if (mServiceType.getChildCount() == 3) {
+				break;
 			}
-
-			// add required time
-			final ViewGroup vg = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_time,
+			final TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_type,
 					null, false);
-			final TextView hour = (TextView) vg.findViewById(R.id.stylish_record_item_service_hour);
-			final String requiredTime;
-			if (record.requiredMinute == 0) {
-				requiredTime = String.format("%d", record.requiredHour);
-			} else {
-				final float time = record.requiredHour + (float) record.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
-				requiredTime = String.format("%.1f", time);
-			}
-			hour.setText(requiredTime);
+			tv.setText(type);
 
 			final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-			mServiceType.addView(vg, llp);
+			llp.rightMargin = getResources().getDimensionPixelSize(R.dimen.record_item_gap_between_service_type);
+
+			mServiceType.addView(tv, llp);
 		}
+
+		// add required time
+		final ViewGroup vg = (ViewGroup) LayoutInflater.from(getContext()).inflate(R.layout.layout_stylish_record_item_service_time, null,
+				false);
+		final TextView hour = (TextView) vg.findViewById(R.id.stylish_record_item_service_hour);
+		final String requiredTime;
+		if (record.requiredMinute == 0) {
+			requiredTime = String.format("%d", record.requiredHour);
+		} else {
+			final float time = record.requiredHour + (float) record.requiredMinute / DateUtilities.A_HOUR_IN_MINUTE;
+			requiredTime = String.format("%.1f", time);
+		}
+		hour.setText(requiredTime);
+
+		final LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		mServiceType.addView(vg, llp);
 
 		// show record information
 		final String information = String.format("%02d:%02d  %s  %s", record.hourOfDay, record.minute, record.name, record.phoneNumber);

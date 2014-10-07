@@ -80,10 +80,10 @@ public class TimesheetFragment extends Fragment {
 		final Class<? extends TimesheetAdapter> className = activity.getTimesheetAdapterClass();
 
 		if (StylishTimesheetAdapter.class.isAssignableFrom(className)) {
-			return new StylishTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
+			return new StylishTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH),
 					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR);
 		} else {
-			return new CustomerTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH) + 1,
+			return new CustomerTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH),
 					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR * 2);
 		}
 	}

@@ -246,7 +246,7 @@ public class BookingFormView extends LinearLayout {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the updated record or the current date as the default date in the picker
 			final int year = mFormController.initilizeYear();
-			final int month = mFormController.initilizeMonth() - 1;
+			final int month = mFormController.initilizeMonth();
 			final int day = mFormController.initilizeDay();
 
 			// Create a new instance of DatePickerDialog and return it
@@ -320,7 +320,7 @@ public class BookingFormView extends LinearLayout {
 			if (positive) {
 				// keep the calendar to outer class
 				final int year = calendar.get(Calendar.YEAR);
-				final int month = calendar.get(Calendar.MONTH) + 1;
+				final int month = calendar.get(Calendar.MONTH);
 				final int day = calendar.get(Calendar.DATE);
 
 				mBookingDate.set(year, month, day, hourOfDay, minute, 0);
@@ -433,7 +433,7 @@ public class BookingFormView extends LinearLayout {
 
 	private String getDateString(Calendar calendar) {
 		final int year = calendar.get(Calendar.YEAR);
-		final int month = calendar.get(Calendar.MONTH);
+		final int month = calendar.get(Calendar.MONTH) + 1;
 		final int day = calendar.get(Calendar.DATE);
 		final int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
 		final int minute = calendar.get(Calendar.MINUTE);

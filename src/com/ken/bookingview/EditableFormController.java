@@ -118,7 +118,7 @@ public class EditableFormController extends FormController {
 		final Resources res = mFormView.getResources();
 
 		final int year = referenceRecord.year;
-		final int month = referenceRecord.month;
+		final int month = referenceRecord.month + 1;
 		final int day = referenceRecord.day;
 		final int hourOfDay = referenceRecord.hourOfDay;
 		final int minute = referenceRecord.minute;
