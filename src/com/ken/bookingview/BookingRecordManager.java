@@ -62,14 +62,14 @@ public class BookingRecordManager {
 				serviceType.add("Long Hair");
 				serviceType.add("Short Hair");
 
-				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 9, 7, 1, 15, "0985091642", serviceType, 2, 30);
+				BookingRecord record = new BookingRecord("ken chen", "male", 2014, 9, 8, 10, 15, "0985091642", serviceType, 2, 30);
 				recordList.add(record);
 
 				serviceType = new ArrayList<String>();
 				serviceType.add("Dye");
 				serviceType.add("Perm");
 
-				record = new BookingRecord("winnie hsu", "female", 2014, 9, 6, 2, 15, "0985091242", serviceType, 3, 00);
+				record = new BookingRecord("winnie hsu", "female", 2014, 9, 9, 12, 15, "0985091242", serviceType, 3, 00);
 				recordList.add(record);
 
 //				final BookingRecord data = new BookingRecord(id, name, sex, year, month, day, hour, minute, phoneNumber, serviceItemList,

@@ -2,7 +2,11 @@ package com.ken.bookingview;
 
 import java.util.Calendar;
 
+import android.util.Log;
+
 public class DateUtilities {
+
+	private static final String TAG = DateUtilities.class.getSimpleName();
 
 	/*
 	 * we assume the 1970/01/01 is start of the day, it's relative index is 0.
@@ -141,4 +145,15 @@ public class DateUtilities {
 	public static synchronized boolean within(Calendar start, Calendar end, Calendar targetStart, Calendar targetEnd) {
 		return (start.before(targetStart) && end.after(targetStart)) || (start.before(targetEnd) && end.after(targetEnd));
 	}
+
+	public static void printCalendar(String from, int year, int month, int day, int hour, int minute) {
+		Log.d(TAG, String.format("[%s] %04d/%02d/%02d %02d:%02d", from, year, month, day, hour, minute));
+	}
+
+	public static void printCalendar(String from, Calendar c) {
+		Log.d(TAG,
+				String.format("[%s] %04d/%02d/%02d %02d:%02d", from, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+						c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
+	}
+
 }

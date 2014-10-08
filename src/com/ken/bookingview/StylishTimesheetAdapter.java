@@ -1,5 +1,6 @@
 package com.ken.bookingview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,10 +12,16 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 
 	private static final String TAG = StylishTimesheetAdapter.class.getSimpleName();
 
-	public StylishTimesheetAdapter(Context context, int year, int month, int day, int maxSize) {
-		super(context, year, month, day, maxSize);
+	public StylishTimesheetAdapter(Context context, int year, int month, int day) {
+		super(context, year, month, day);
 	}
 
+	@Override
+	public int getCount() {
+		return DateUtilities.A_DAY_IN_HOUR;
+	}
+
+	@SuppressLint("InflateParams")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		final BookingRecord record = getAvailableRecord(position);
@@ -23,7 +30,7 @@ public class StylishTimesheetAdapter extends TimesheetAdapter {
 		if (convertView == null) {
 			convertView = LayoutInflater.from(mContext).inflate(R.layout.layout_stylish_record_item_view, null, false);
 			convertView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, mRecordItemHeight));
-			convertView.setTag(R.id.booking_item_count, mMaxSize);
+			convertView.setTag(R.id.booking_item_count, getCount());
 		}
 		convertView.setTag(R.id.booking_item_identity, position);
 		convertView.setTag(R.id.booking_item_info, record);

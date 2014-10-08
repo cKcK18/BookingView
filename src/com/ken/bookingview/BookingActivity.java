@@ -4,6 +4,8 @@ import java.util.Calendar;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.MessageQueue.IdleHandler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
@@ -94,6 +96,15 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 				changeDate(ACTION_PAGER, dateIndex);
 			}
 		});
+
+		// move to today when queue idle
+		Looper.myQueue().addIdleHandler(new IdleHandler() {
+			@Override
+			public boolean queueIdle() {
+				changeDate(ACTION_TODAY, -1);
+				return false;
+			}
+		});
 	}
 
 	protected final void performDateToBeChanged(int action) {
@@ -113,17 +124,6 @@ abstract public class BookingActivity extends FragmentActivity implements OnSele
 	private String getStringWithYearAndMonth(Calendar calendar) {
 		return String.format("%d%s %d", calendar.get(Calendar.MONTH) + 1, getResources().getString(R.string.booking_view_date),
 				calendar.get(Calendar.YEAR));
-	}
-
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
-		mHandler.postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				changeDate(ACTION_TODAY, -1);
-			}
-		}, 500);
 	}
 
 	@Override

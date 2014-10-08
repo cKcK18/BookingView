@@ -81,20 +81,23 @@ public class TimesheetFragment extends Fragment {
 
 		if (StylishTimesheetAdapter.class.isAssignableFrom(className)) {
 			return new StylishTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH),
-					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR);
+					mCalendar.get(Calendar.DATE));
 		} else {
 			return new CustomerTimesheetAdapter(getActivity(), mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH),
-					mCalendar.get(Calendar.DATE), DateUtilities.A_DAY_IN_HOUR * 2);
+					mCalendar.get(Calendar.DATE));
 		}
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		final int initialSelection = mAdapter.getCount() / 3;
+
 		// Inflate the layout containing a title and body text.
 		ListView listView = new ListView(getActivity());
 		listView.setVelocityScale(0.5f);
 		listView.setVerticalScrollBarEnabled(false);
 		listView.setAdapter(mAdapter);
+		listView.setSelection(initialSelection);
 		return listView;
 	}
 
