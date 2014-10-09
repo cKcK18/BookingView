@@ -1,12 +1,14 @@
 package com.ken.bookingview;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,8 +47,6 @@ public class StylishTimesheetItemView extends LinearLayout {
 	@Override
 	protected void onFinishInflate() {
 		mHourView = (TextView) findViewById(R.id.stylish_record_item_hour_of_day);
-		mServiceType = (ViewGroup) findViewById(R.id.stylish_record_item_service);
-		mRecordInfo = (TextView) findViewById(R.id.stylish_record_item_info);
 	}
 
 	@Override
@@ -84,14 +84,28 @@ public class StylishTimesheetItemView extends LinearLayout {
 	@SuppressLint("InflateParams")
 	private void proceedRecord() {
 		final Object object = getTag(R.id.booking_item_info);
-		// check that any record in the time
-		mServiceType.removeAllViews();
-		if (object == null) {
+		// reset all components
+		if (mServiceType != null) {
+			mServiceType.removeAllViews();
+		}
+		if (mRecordInfo != null) {
 			mRecordInfo.setText(null);
-			setOnClickListener(null);
+		}
+		setOnClickListener(null);
+
+		// check that any record in the time
+		if (object == null) {
 			return;
 		}
 		final BookingRecord record = (BookingRecord) object;
+
+		// inflate view stub
+		ViewStub stub = (ViewStub) findViewById(R.id.stylish_record_item_info_stub);
+		if (stub != null) {
+			ViewGroup inflated = (ViewGroup) stub.inflate();
+			mServiceType = (ViewGroup) inflated.findViewById(R.id.stylish_record_item_service);
+			mRecordInfo = (TextView) inflated.findViewById(R.id.stylish_record_item_info);
+		}
 
 		// add service type
 		final ArrayList<String> serviceType = record.serviceType;

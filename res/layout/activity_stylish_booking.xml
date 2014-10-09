@@ -13,7 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="#6063A8"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp" >
 
             <ImageButton
                 android:id="@+id/stylish_booking_back_button"
@@ -22,10 +24,6 @@
                 android:layout_centerVertical="true"
                 android:adjustViewBounds="true"
                 android:background="@android:color/transparent"
-                android:paddingBottom="8dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="0dp"
-                android:paddingTop="8dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/back" />
 
